@@ -2,8 +2,8 @@ name: Figure Skating Competition Registration Alert
 
 on:
   schedule:
-    # Runs twice daily at 07:09 and 19:09 Danish Time (06:09 & 18:09 UTC in CET)
-    - cron: '9 6,18 * * *'
+    # Runs 3 times daily at 06:09, 13:09, and 19:09 Danish Time (05:09, 12:09, and 18:09 UTC in CET)
+    - cron: '9 5,12,18 * * *'
   workflow_dispatch:
     inputs:
       test_alert:

@@ -77,10 +77,12 @@ skating-competition-alert/
 
 ## ⏰ Automation Schedule (GitHub Actions)
 
-The runner runs automatically twice daily on GitHub Actions:
-- **07:09 Danish Time** (06:09 UTC CET)
+The runner runs automatically 3 times daily on GitHub Actions:
+- **06:09 Danish Time** (05:09 UTC CET)
+- **13:09 Danish Time** (12:09 UTC CET)
 - **19:09 Danish Time** (18:09 UTC CET)
-- **Cron**: `'9 6,18 * * *'`
+- **Cron**: `'9 5,12,18 * * *'`
+- **Zero Spam**: If there are no registration status changes, **no WhatsApp alert is sent**. Alerts are strictly dispatched when a spot reopens or registration opens.
 
 ### GitHub Secrets Required:
 | Secret Name | Description | Example |
