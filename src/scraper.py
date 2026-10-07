@@ -74,6 +74,14 @@ class DsuCompetitionScraper:
         except Exception as e:
             logger.warning(f"Failed to check TSK Flyver Cup portal: {e}")
 
+        # 4. Dedicated GSF Pingvin Cup portal
+        try:
+            pingvin_comp = self._check_gsf_pingvin_cup()
+            if pingvin_comp and not any("pingvin" in c.title.lower() for c in competitions):
+                competitions.append(pingvin_comp)
+        except Exception as e:
+            logger.warning(f"Failed to check GSF Pingvin Cup portal: {e}")
+
         return competitions
 
     def _parse_html(self, html: str) -> List[Competition]:
@@ -300,4 +308,48 @@ class DsuCompetitionScraper:
         except Exception as e:
             logger.warning(f"Error checking Flyver Cup page: {e}")
             return None
+
+    def _check_gsf_pingvin_cup(self) -> Optional[Competition]:
+        """
+        Checks Gladsaxe Skøjteløber-Forening (GSF) dedicated Pingvin Cup 2027 portal
+        (https://gsf-kunst.dk/klub/gladsaxe-skojtelober-forening/sider/pingvin-cup-2027)
+        for published invitation and registration links.
+        Target categories: B1, B2 and FunSkate Free.
+        """
+        gsf_url = "https://gsf-kunst.dk/klub/gladsaxe-skojtelober-forening/sider/pingvin-cup-2027"
+        try:
+            resp = self.session.get(gsf_url, timeout=20)
+            if resp.status_code != 200:
+                return None
+
+            soup = BeautifulSoup(resp.content.decode("utf-8", errors="ignore"), "html.parser")
+            content_div = soup.find("div", class_="content") or soup.body
+            content_text = content_div.get_text().lower() if content_div else ""
+
+            has_invitation = any(
+                k in content_text
+                for k in ["invitation", "tilmelding", "forms.gle", "google.com/forms", "klubmodul", "sportity"]
+            )
+
+            return Competition(
+                event_id="gsf_pingvin_cup_2027",
+                title="Pingvin Cup 2027 (Gladsaxe Skøjteløber-Forening)",
+                dates="03.04.2027-04.04.2027",
+                deadline="Ikke åbnet endnu" if not has_invitation else "Se portal",
+                venue="Gladsaxe Skøjtehal",
+                price="Valg",
+                status="Åben" if has_invitation else "Kommende",
+                spots_taken=0,
+                spots_max=0,
+                spots_available=0,
+                is_open=has_invitation,
+                is_sold_out=False,
+                is_closed=False,
+                categories=["Novice B1", "Springs B2", "FunSkate Free"],
+                registration_url=gsf_url,
+            )
+        except Exception as e:
+            logger.warning(f"Error checking Pingvin Cup page: {e}")
+            return None
+
 

@@ -62,6 +62,14 @@
       "alert_deadline_hours": [48, 24]
     },
     {
+      "name": "Pingvin Cup",
+      "keywords": ["Pingvin Cup", "Pingvin", "Pingvincup"],
+      "alert_on_open": true,
+      "alert_on_sold_out": true,
+      "alert_on_reopened": true,
+      "alert_deadline_hours": [48, 24]
+    },
+    {
       "name": "Danmarks Cup / DM",
       "keywords": ["Danmarks Cup", "Danmarksmesterskab", "DM "],
       "alert_on_open": true,
