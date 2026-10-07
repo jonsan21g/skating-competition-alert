@@ -118,28 +118,13 @@ def cmd_unwatch(name: str) -> None:
 
 def cmd_test_alert() -> None:
     """Sends a sample test alert across configured notifiers (WhatsApp / Console)."""
-    sample_comp = Competition(
-        event_id="tsk_flyver_cup_2027",
-        title="Flyver Cup 2027 (Tårnby Skøjteklub)",
-        dates="12.02.2027-14.02.2027",
-        deadline="15.11.2026 kl. 16:45",
-        venue="Tårnby Skøjtehal",
-        price="575 kr.",
-        status="Åben",
-        spots_taken=199,
-        spots_max=200,
-        spots_available=1,
-        is_open=True,
-        is_sold_out=False,
-        is_closed=False,
-        registration_url="https://www.holdsport.dk/public_ticket_events/flyver-cup-20276",
-    )
-    alert = AlertEvent(
-        alert_type=AlertType.SPOT_REOPENED,
-        competition=sample_comp,
-        message="A spot just reopened for Flyver Cup 2027! 1 spot available.",
-        old_spots_taken=200,
-        new_spots_taken=199,
+    test_message = (
+        "🧪 [TEST ALERT - VERIFICATION ONLY]\n\n"
+        "✅ Your GitHub Secrets and WhatsApp alerts are working properly!\n\n"
+        "🏆 Sample Event: Flyver Cup 2027 (Spot Reopened Simulation)\n"
+        "ℹ️ NOTE: This is ONLY a test simulation to confirm your notification setup. "
+        "Flyver Cup is currently still sold out on Holdsport.\n\n"
+        "👉 Portal link: https://www.holdsport.dk/public_ticket_events/flyver-cup-20276"
     )
 
     notifiers = get_active_notifiers()
@@ -150,8 +135,8 @@ def cmd_test_alert() -> None:
 
     for n in notifiers:
         success = n.send(
-            subject=f"[TEST] {alert.alert_type.value}: {sample_comp.title}",
-            message=alert.format_notification(),
+            subject="[TEST] Skating Alert System Verification",
+            message=test_message,
         )
         print(f"Notifier {n.__class__.__name__}: {'SUCCESS' if success else 'FAILED'}")
 
