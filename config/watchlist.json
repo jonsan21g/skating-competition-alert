@@ -46,6 +46,22 @@
       "alert_deadline_hours": [48, 24]
     },
     {
+      "name": "Flyver Cup",
+      "keywords": ["Flyver Cup", "Flyver"],
+      "alert_on_open": true,
+      "alert_on_sold_out": true,
+      "alert_on_reopened": true,
+      "alert_deadline_hours": [48, 24]
+    },
+    {
+      "name": "Forårskonkurrence / Forårsfinalen",
+      "keywords": ["Forårskonkurrence", "Forårsfinale", "Foraarskonkurrence", "Foraarsfinale", "Friløbskonkurrence"],
+      "alert_on_open": true,
+      "alert_on_sold_out": true,
+      "alert_on_reopened": true,
+      "alert_deadline_hours": [48, 24]
+    },
+    {
       "name": "Danmarks Cup / DM",
       "keywords": ["Danmarks Cup", "Danmarksmesterskab", "DM "],
       "alert_on_open": true,
