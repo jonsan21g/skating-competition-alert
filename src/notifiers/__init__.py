@@ -6,6 +6,8 @@ from .whatsapp import WhatsAppNotifier
 from .console import ConsoleNotifier
 from ..config import AppConfig
 
+__all__ = ["get_active_notifiers", "WhatsAppNotifier", "ConsoleNotifier", "BaseNotifier"]
+
 
 def get_active_notifiers() -> List[BaseNotifier]:
     """Returns all enabled and configured notifiers (Console and WhatsApp via CallMeBot)."""

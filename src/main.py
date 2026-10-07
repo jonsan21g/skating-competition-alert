@@ -10,7 +10,7 @@ from typing import List
 from .config import AppConfig, load_watchlist, save_watchlist
 from .models import AlertEvent, AlertType, Competition
 from .monitor import CompetitionMonitor
-from .notifiers import get_active_notifiers
+from .notifiers import get_active_notifiers, WhatsAppNotifier
 from .scraper import DsuCompetitionScraper
 
 logging.basicConfig(
