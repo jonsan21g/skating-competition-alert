@@ -144,6 +144,10 @@ def cmd_test_alert() -> None:
 
     notifiers = get_active_notifiers()
     print(f"Testing alert dispatch across {len(notifiers)} active notifier(s)...")
+    wa_found = any(isinstance(n, WhatsAppNotifier) for n in notifiers)
+    if not wa_found:
+        print("⚠️ WhatsAppNotifier was NOT loaded. Please check that CALLMEBOT_PHONE and CALLMEBOT_API_KEY are configured in GitHub Secrets / .env!")
+
     for n in notifiers:
         success = n.send(
             subject=f"[TEST] {alert.alert_type.value}: {sample_comp.title}",

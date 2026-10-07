@@ -6,6 +6,11 @@ on:
     - cron: '9 6,18 * * *'
   workflow_dispatch:
     inputs:
+      test_alert:
+        description: 'Send test WhatsApp alert (verifies secrets & CallMeBot)'
+        required: false
+        default: false
+        type: boolean
       dry_run:
         description: 'Dry run (do not persist state or send live alerts)'
         required: false
@@ -40,13 +45,16 @@ jobs:
           CALLMEBOT_PHONE: ${{ secrets.CALLMEBOT_PHONE }}
           CALLMEBOT_API_KEY: ${{ secrets.CALLMEBOT_API_KEY }}
         run: |
-          if [ "${{ inputs.dry_run }}" = "true" ]; then
+          if [ "${{ inputs.test_alert }}" = "true" ]; then
+            python -m src.main --test-alert
+          elif [ "${{ inputs.dry_run }}" = "true" ]; then
             python -m src.main --check --dry-run
           else
             python -m src.main --check
           fi
 
       - name: Commit updated state if changed
+        if: ${{ inputs.test_alert != true }}
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"

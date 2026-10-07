@@ -23,6 +23,8 @@ def get_active_notifiers() -> List[BaseNotifier]:
         )
         if wa.is_configured():
             notifiers.append(wa)
+        else:
+            print("⚠️ WhatsApp is enabled, but CALLMEBOT_PHONE or CALLMEBOT_API_KEY is not configured or empty.")
 
     # If no configured notifiers found, default to console
     if not notifiers:
