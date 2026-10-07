@@ -41,8 +41,9 @@ class DsuCompetitionScraper:
         Fetches competitions across monitored sources defined in config/sources.json:
         1. DSU Klubmodul registration portal (dsu_klubmodul)
         2. DSU official calendar / Terminsplan (dsu_calendar)
-        3. Holdsport Flyver Cup ticket event (holdsport_flyver_cup)
-        4. GSF Pingvin Cup portal (gsf_pingvin_cup)
+        3. HIKU Herlev Klubmodul portal for Isblomsten (hiku_klubmodul)
+        4. Holdsport Flyver Cup ticket event (holdsport_flyver_cup)
+        5. GSF Pingvin Cup portal (gsf_pingvin_cup)
         """
         competitions: List[Competition] = []
 
@@ -83,7 +84,22 @@ class DsuCompetitionScraper:
             except Exception as e:
                 logger.warning(f"Failed to fetch DSU calendar competitions: {e}")
 
-        # 3. Dedicated Holdsport Flyver Cup portal
+        # 3. Dedicated HIKU (Herlev) Klubmodul portal for Isblomsten
+        src_hiku = self.get_source("hiku_klubmodul")
+        if src_hiku:
+            try:
+                api_url = src_hiku.get("api_url", "https://hiku.dk/cms/include/api/json/events.aspx")
+                table_url = src_hiku.get("table_url", "https://hiku.dk/cms/EventOverviewList.aspx")
+                base_url = src_hiku.get("base_url", "https://hiku.dk/cms/")
+                hiku_comps = self._check_hiku_events(api_url, table_url, base_url)
+                if hiku_comps:
+                    # Prefer live HIKU registration over general calendar placeholder
+                    competitions = [c for c in competitions if not ("isblomst" in c.title.lower() and c.event_id.startswith("dsu_cal_"))]
+                    competitions.extend(hiku_comps)
+            except Exception as e:
+                logger.warning(f"Failed to check HIKU Klubmodul: {e}")
+
+        # 4. Dedicated Holdsport Flyver Cup portal
         src_flyver = self.get_source("holdsport_flyver_cup")
         if src_flyver:
             try:
@@ -94,7 +110,7 @@ class DsuCompetitionScraper:
             except Exception as e:
                 logger.warning(f"Failed to check Holdsport Flyver Cup portal: {e}")
 
-        # 4. Dedicated GSF Pingvin Cup portal
+        # 5. Dedicated GSF Pingvin Cup portal
         src_pingvin = self.get_source("gsf_pingvin_cup")
         if src_pingvin:
             try:
@@ -288,6 +304,92 @@ class DsuCompetitionScraper:
 
         logger.info(f"Found {len(cal_comps)} scheduled upcoming competitions on DSU calendar.")
         return cal_comps
+
+    def _check_hiku_events(
+        self,
+        api_url: str = "https://hiku.dk/cms/include/api/json/events.aspx",
+        table_url: str = "https://hiku.dk/cms/EventOverviewList.aspx",
+        base_url: str = "https://hiku.dk/cms/",
+    ) -> List[Competition]:
+        """
+        Monitors Herlev Idrætsforenings Kunstskøjteafdeling (HIKU) Klubmodul portal
+        for Isblomsten registration announcements and live enrollment status.
+        Uses both the JSON API feed behind EventOverview.aspx and table view fallback.
+        """
+        found_comps: List[Competition] = []
+        logger.info(f"Checking HIKU (Herlev) Klubmodul for Isblomsten at {api_url}...")
+
+        # 1. Check JSON API feed
+        try:
+            resp = self.session.get(api_url, timeout=20)
+            if resp.status_code == 200:
+                try:
+                    data = resp.json()
+                    for ev in data.get("Events", []):
+                        name = ev.get("name", "")
+                        teaser = ev.get("teaser", "")
+                        desc = ev.get("description", "")
+                        combined_text = f"{name} {teaser} {desc}".lower()
+
+                        if "isblomst" in combined_text:
+                            ev_id = f"hiku_{ev.get('id', '')}"
+                            start_date = ev.get("start_date", "")
+                            end_date = ev.get("end_date", "")
+                            dates = f"{start_date}-{end_date}" if start_date and end_date else (start_date or "30.01.2027-31.01.2027")
+                            deadline = ev.get("enrollment_end", "") or "Se portal"
+                            venue = ev.get("location") or ev.get("address") or "Herlev Skøjtehal"
+                            price = f"{ev.get('price', 'Valg')} kr."
+
+                            sold_out = str(ev.get("sold_out", "false")).lower() == "true"
+                            waiting_list = str(ev.get("waiting_list", "false")).lower() == "true"
+                            active = str(ev.get("active", "0")) == "1"
+
+                            is_sold_out = sold_out or waiting_list
+                            is_open = active and not is_sold_out
+                            is_closed = not active
+
+                            status = "Udsolgt" if is_sold_out else ("Åben" if is_open else "Lukket")
+
+                            reg_url = f"{base_url}ProfileEventEnrollment.aspx?EventID={ev.get('id')}"
+                            part_url = f"{base_url}EventShowParticipants.aspx?EventID={ev.get('id')}"
+
+                            comp = Competition(
+                                event_id=ev_id,
+                                title=name if "isblomst" in name.lower() else f"Isblomsten 2027 ({name})",
+                                dates=dates,
+                                deadline=deadline,
+                                venue=venue,
+                                price=price,
+                                status=status,
+                                spots_taken=0,
+                                spots_max=0,
+                                spots_available=0,
+                                is_open=is_open,
+                                is_sold_out=is_sold_out,
+                                is_closed=is_closed,
+                                registration_url=reg_url,
+                                participants_url=part_url,
+                            )
+                            found_comps.append(comp)
+                except Exception as e:
+                    logger.debug(f"JSON decode failed for HIKU events API: {e}")
+        except Exception as e:
+            logger.warning(f"Failed to query HIKU events JSON API: {e}")
+
+        # 2. If not found via JSON API, check HTML table view
+        if not found_comps:
+            try:
+                resp = self.session.get(table_url, timeout=20)
+                if resp.status_code == 200:
+                    html_comps = self._parse_klubmodul_html(resp.text, base_url)
+                    for c in html_comps:
+                        if "isblomst" in c.title.lower():
+                            c.event_id = f"hiku_{c.event_id}"
+                            found_comps.append(c)
+            except Exception as e:
+                logger.warning(f"Failed to query HIKU HTML table view: {e}")
+
+        return found_comps
 
     def _check_tsk_flyver_cup(self, holdsport_url: str) -> Optional[Competition]:
         """

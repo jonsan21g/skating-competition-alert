@@ -1,9 +1,11 @@
 """Unit tests for sources configuration and competition matching."""
 
 import unittest
+from unittest.mock import patch, MagicMock
 from src.config import load_sources, load_watchlist
 from src.models import Competition, AlertType
 from src.monitor import CompetitionMonitor
+from src.scraper import DsuCompetitionScraper
 
 
 class TestSourcesAndWatchlist(unittest.TestCase):
@@ -12,9 +14,10 @@ class TestSourcesAndWatchlist(unittest.TestCase):
         cfg = load_sources()
         self.assertIn("sources", cfg)
         sources = cfg["sources"]
-        self.assertGreaterEqual(len(sources), 4)
+        self.assertGreaterEqual(len(sources), 5)
 
         source_ids = [s["id"] for s in sources]
+        self.assertIn("hiku_klubmodul", source_ids)
         self.assertIn("dsu_klubmodul", source_ids)
         self.assertIn("dsu_calendar", source_ids)
         self.assertIn("holdsport_flyver_cup", source_ids)
@@ -30,9 +33,50 @@ class TestSourcesAndWatchlist(unittest.TestCase):
         self.assertIn("Flyver Cup", names)
         self.assertEqual(len(watched), 4)
 
+        # Verify Isblomsten monitors hiku_klubmodul
+        isblomsten = next(w for w in watched if w["name"] == "Isblomsten")
+        self.assertIn("hiku_klubmodul", isblomsten.get("source_ids", []))
+
+    def test_hiku_isblomsten_detection(self):
+        """Test detecting Isblomsten registration when published on HIKU Klubmodul."""
+        scraper = DsuCompetitionScraper()
+        mock_api_data = {
+            "Events": [
+                {
+                    "id": "850",
+                    "name": "Isblomsten 2027",
+                    "teaser": "Velkommen til Isblomsten 2027 i Herlev Skøjtehal",
+                    "location": "Herlev Skating Arena",
+                    "address": "Tvedvangen 204",
+                    "start_date": "30.01.2027",
+                    "end_date": "31.01.2027",
+                    "enrollment_end": "05.01.2027",
+                    "price": "550",
+                    "sold_out": "false",
+                    "waiting_list": "False",
+                    "active": "1",
+                }
+            ]
+        }
+
+        with patch.object(scraper.session, "get") as mock_get:
+            mock_resp = MagicMock()
+            mock_resp.status_code = 200
+            mock_resp.json.return_value = mock_api_data
+            mock_get.return_value = mock_resp
+
+            comps = scraper._check_hiku_events()
+            self.assertEqual(len(comps), 1)
+            comp = comps[0]
+            self.assertEqual(comp.event_id, "hiku_850")
+            self.assertIn("Isblomsten", comp.title)
+            self.assertTrue(comp.is_open)
+            self.assertFalse(comp.is_sold_out)
+            self.assertIn("EventID=850", comp.registration_url)
+            self.assertEqual(comp.venue, "Herlev Skating Arena")
+
     def test_flyver_cup_spot_reopened_flow(self):
         monitor = CompetitionMonitor()
-        # Sold out state
         prev = Competition(
             event_id="tsk_flyver_cup_2027",
             title="Flyver Cup 2027 (Tårnby Skøjteklub)",
@@ -49,7 +93,6 @@ class TestSourcesAndWatchlist(unittest.TestCase):
             is_closed=False,
         )
 
-        # A spot just freed up!
         curr = Competition(
             event_id="tsk_flyver_cup_2027",
             title="Flyver Cup 2027 (Tårnby Skøjteklub)",

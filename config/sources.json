@@ -1,6 +1,19 @@
 {
   "sources": [
     {
+      "id": "hiku_klubmodul",
+      "name": "HIKU (Herlev) Klubmodul Event Overview",
+      "type": "hiku_klubmodul",
+      "url": "https://hiku.dk/cms/EventOverview.aspx",
+      "api_url": "https://hiku.dk/cms/include/api/json/events.aspx",
+      "table_url": "https://hiku.dk/cms/EventOverviewList.aspx",
+      "base_url": "https://hiku.dk/cms/",
+      "competitions": [
+        "Isblomsten"
+      ],
+      "enabled": true
+    },
+    {
       "id": "dsu_klubmodul",
       "name": "DSU Klubmodul Registration Portal",
       "type": "dsu_klubmodul",

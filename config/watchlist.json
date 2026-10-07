@@ -10,8 +10,9 @@
         "Forårskonkurrence Øst",
         "Foraarskonkurrence Oest",
         "Foraarskonkurrence Øst",
-        "Forårskonkurrence",
-        "Foraarskonkurrence",
+        "Forårskonkurrence øst",
+        "Foraarskonkurrence oest",
+        "Forårskonkurrence - Øst",
         "FKO"
       ],
       "source_ids": ["dsu_klubmodul", "dsu_calendar"],
@@ -25,7 +26,7 @@
         "Isblomsten",
         "Isblomst"
       ],
-      "source_ids": ["dsu_klubmodul", "dsu_calendar"],
+      "source_ids": ["hiku_klubmodul", "dsu_klubmodul", "dsu_calendar"],
       "alert_on_open": true,
       "alert_on_sold_out": true,
       "alert_on_reopened": true

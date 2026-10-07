@@ -32,6 +32,7 @@ The configuration is partitioned into two dedicated JSON files:
 
 2. **`config/sources.json`**:
    Declares the exact external portals and URLs where the scraper checks each competition:
+   - `hiku_klubmodul`: Herlev IF Kunstskøjteafdeling (HIKU) dedicated Klubmodul portal (`https://hiku.dk/cms/EventOverview.aspx` & JSON feed `https://hiku.dk/cms/include/api/json/events.aspx`) for **Isblomsten**.
    - `dsu_klubmodul`: Central DSU registration list (`https://dsu.klub-modul.dk/cms/EventOverviewList.aspx`)
    - `dsu_calendar`: DSU Official Terminsplan / Calendar (`https://www.danskate.dk/events/`)
    - `holdsport_flyver_cup`: Dedicated Flyver Cup Holdsport ticket portal (`https://www.holdsport.dk/public_ticket_events/flyver-cup-20276`)
