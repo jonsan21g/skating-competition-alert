@@ -1,23 +1,25 @@
-"""Web scraper for Dansk Skøjte Union (DSU) Klubmodul competition portal."""
+"""Web scraper for Dansk Skøjte Union (DSU) competitions and monitored events."""
 
 import logging
+import os
 import re
-from typing import List, Optional
+import shutil
+import subprocess
+from typing import Any, Dict, List, Optional
 import requests
 from bs4 import BeautifulSoup
 
-from .config import AppConfig
+from .config import AppConfig, load_sources
 from .models import Competition
 
 logger = logging.getLogger(__name__)
 
 
 class DsuCompetitionScraper:
-    """Scrapes official DSU competition registrations from Klubmodul."""
+    """Scrapes competition registrations and announcements across configured sources."""
 
-    def __init__(self, url: Optional[str] = None):
-        self.url = url or AppConfig.DSU_OVERVIEW_LIST_URL
-        self.base_url = AppConfig.DSU_BASE_URL
+    def __init__(self, sources_config: Optional[Dict[str, Any]] = None):
+        self.sources_cfg = sources_config or load_sources()
         self.session = requests.Session()
         self.session.headers.update({
             "User-Agent": (
@@ -27,64 +29,89 @@ class DsuCompetitionScraper:
             "Accept-Language": "da-DK,da;q=0.9,en-US;q=0.8,en;q=0.7",
         })
 
+    def get_source(self, source_id: str) -> Optional[Dict[str, Any]]:
+        """Retrieves a source definition by ID from sources.json."""
+        for s in self.sources_cfg.get("sources", []):
+            if s.get("id") == source_id and s.get("enabled", True):
+                return s
+        return None
+
     def fetch_competitions(self) -> List[Competition]:
         """
-        Fetches competitions across DSU sources:
-        1. Official DSU Klubmodul registration portal (active signups, spots, status)
-        2. DSU official calendar (terminsplan) for upcoming scheduled competitions (Isblomsten, Forårskonkurrence, etc.)
-        3. Tårnby Skøjteklub dedicated Flyver Cup portal
+        Fetches competitions across monitored sources defined in config/sources.json:
+        1. DSU Klubmodul registration portal (dsu_klubmodul)
+        2. DSU official calendar / Terminsplan (dsu_calendar)
+        3. Holdsport Flyver Cup ticket event (holdsport_flyver_cup)
+        4. GSF Pingvin Cup portal (gsf_pingvin_cup)
         """
         competitions: List[Competition] = []
 
-        # 1. Active DSU Klubmodul registrations
-        logger.info(f"Fetching active DSU registrations from {self.url}...")
-        try:
-            resp = self.session.get(self.url, timeout=30)
-            resp.raise_for_status()
+        # 1. DSU Klubmodul Central Registrations
+        src_klub = self.get_source("dsu_klubmodul")
+        if src_klub:
+            klub_url = src_klub.get("url", "https://dsu.klub-modul.dk/cms/EventOverviewList.aspx")
+            base_url = src_klub.get("base_url", "https://dsu.klub-modul.dk/cms/")
+            logger.info(f"Fetching active DSU registrations from {klub_url}...")
+            try:
+                resp = self.session.get(klub_url, timeout=30)
+                resp.raise_for_status()
 
-            content = resp.content
-            html = ""
-            for encoding in ("utf-8", "utf-8-sig", "iso-8859-1", "windows-1252"):
-                try:
-                    html = content.decode(encoding)
-                    if "Sjælland" in html or "København" in html or "Åben" in html:
-                        break
-                except UnicodeDecodeError:
-                    continue
+                content = resp.content
+                html = ""
+                for encoding in ("utf-8", "utf-8-sig", "iso-8859-1", "windows-1252"):
+                    try:
+                        html = content.decode(encoding)
+                        if "Sjælland" in html or "København" in html or "Åben" in html:
+                            break
+                    except UnicodeDecodeError:
+                        continue
 
-            if not html:
-                html = resp.text
+                if not html:
+                    html = resp.text
 
-            competitions.extend(self._parse_html(html))
-        except requests.RequestException as e:
-            logger.error(f"Failed to fetch DSU registrations from Klubmodul: {e}")
+                competitions.extend(self._parse_klubmodul_html(html, base_url))
+            except requests.RequestException as e:
+                logger.error(f"Failed to fetch DSU registrations from Klubmodul: {e}")
 
         # 2. Upcoming competitions from DSU Official Calendar (Terminsplan)
-        try:
-            cal_comps = self._fetch_dsu_calendar_competitions(existing=competitions)
-            competitions.extend(cal_comps)
-        except Exception as e:
-            logger.warning(f"Failed to fetch DSU calendar competitions: {e}")
+        src_cal = self.get_source("dsu_calendar")
+        if src_cal:
+            try:
+                cal_url = src_cal.get("url", "https://www.danskate.dk/events/")
+                cal_comps = self._fetch_dsu_calendar_competitions(cal_url, existing=competitions)
+                competitions.extend(cal_comps)
+            except Exception as e:
+                logger.warning(f"Failed to fetch DSU calendar competitions: {e}")
 
-        # 3. Dedicated TSK Flyver Cup portal
-        try:
-            flyver_comp = self._check_tsk_flyver_cup()
-            if flyver_comp and not any("flyver" in c.title.lower() for c in competitions):
-                competitions.append(flyver_comp)
-        except Exception as e:
-            logger.warning(f"Failed to check TSK Flyver Cup portal: {e}")
+        # 3. Dedicated Holdsport Flyver Cup portal
+        src_flyver = self.get_source("holdsport_flyver_cup")
+        if src_flyver:
+            try:
+                flyver_url = src_flyver.get("url", "https://www.holdsport.dk/public_ticket_events/flyver-cup-20276")
+                flyver_comp = self._check_tsk_flyver_cup(flyver_url)
+                if flyver_comp and not any("flyver" in c.title.lower() for c in competitions):
+                    competitions.append(flyver_comp)
+            except Exception as e:
+                logger.warning(f"Failed to check Holdsport Flyver Cup portal: {e}")
 
         # 4. Dedicated GSF Pingvin Cup portal
-        try:
-            pingvin_comp = self._check_gsf_pingvin_cup()
-            if pingvin_comp and not any("pingvin" in c.title.lower() for c in competitions):
-                competitions.append(pingvin_comp)
-        except Exception as e:
-            logger.warning(f"Failed to check GSF Pingvin Cup portal: {e}")
+        src_pingvin = self.get_source("gsf_pingvin_cup")
+        if src_pingvin:
+            try:
+                pingvin_url = src_pingvin.get("url", "https://gsf-kunst.dk/klub/gladsaxe-skojtelober-forening/sider/pingvin-cup-2027")
+                pingvin_comp = self._check_gsf_pingvin_cup(pingvin_url)
+                if pingvin_comp and not any("pingvin" in c.title.lower() for c in competitions):
+                    competitions.append(pingvin_comp)
+            except Exception as e:
+                logger.warning(f"Failed to check GSF Pingvin Cup portal: {e}")
 
         return competitions
 
-    def _parse_html(self, html: str) -> List[Competition]:
+    def _parse_html(self, html: str, base_url: str = "https://dsu.klub-modul.dk/cms/") -> List[Competition]:
+        """Backwards-compatible wrapper for parsing Klubmodul HTML."""
+        return self._parse_klubmodul_html(html, base_url)
+
+    def _parse_klubmodul_html(self, html: str, base_url: str) -> List[Competition]:
         """Parses HTML content from DSU EventOverviewList.aspx."""
         soup = BeautifulSoup(html, "html.parser")
         table = soup.find("table")
@@ -133,38 +160,31 @@ class DsuCompetitionScraper:
                 if id_match:
                     event_id = id_match.group(1)
                     if "ProfileEventEnrollment" in href and not reg_url:
-                        reg_url = href if href.startswith("http") else f"{self.base_url}{href.lstrip('/')}"
+                        reg_url = href if href.startswith("http") else f"{base_url}{href.lstrip('/')}"
                     elif "EventShowParticipants" in href and not part_url:
-                        part_url = href if href.startswith("http") else f"{self.base_url}{href.lstrip('/')}"
+                        part_url = href if href.startswith("http") else f"{base_url}{href.lstrip('/')}"
 
             if not reg_url and event_id:
-                reg_url = f"{self.base_url}ProfileEventEnrollment.aspx?EventID={event_id}"
+                reg_url = f"{base_url}ProfileEventEnrollment.aspx?EventID={event_id}"
 
-            # Fallback event ID from title if missing
             if not event_id:
                 event_id = re.sub(r"[^a-zA-Z0-9]", "_", title.lower())
 
-            # Determine registration states
             status_lower = status_text.lower()
             is_closed = any(term in status_lower for term in ("lukket", "closed", "slut"))
             
-            # Determine sold out state:
-            # An event is sold out if spots_max is defined and taken >= max, or text specifies it,
-            # BUT it is not yet past the deadline / officially closed.
             is_sold_out = False
             if spots_max > 0 and spots_taken >= spots_max:
                 is_sold_out = True
             elif any(term in status_lower for term in ("udsolgt", "venteliste")):
                 is_sold_out = True
 
-            # Open state: status says Åben and spots are available, or not closed
             is_open = (
                 any(term in status_lower for term in ("åben", "aaben", "open"))
                 and not is_sold_out
                 and not is_closed
             )
 
-            # Extract category chips from detail column (td 7)
             categories = []
             if len(tds) >= 8:
                 detail_text = tds[7].get_text(separator="\n", strip=True)
@@ -199,12 +219,11 @@ class DsuCompetitionScraper:
         logger.info(f"Successfully scraped {len(competitions)} competitions from Klubmodul.")
         return competitions
 
-    def _fetch_dsu_calendar_competitions(self, existing: List[Competition]) -> List[Competition]:
+    def _fetch_dsu_calendar_competitions(self, calendar_url: str, existing: List[Competition]) -> List[Competition]:
         """
         Fetches upcoming scheduled competitions announced on DSU official Terminsplan
         (https://www.danskate.dk/events/) that have not yet opened for registration on Klubmodul.
         """
-        calendar_url = "https://www.danskate.dk/events/"
         logger.info(f"Checking DSU official event calendar from {calendar_url}...")
         resp = self.session.get(calendar_url, timeout=25)
         if resp.status_code != 200:
@@ -228,7 +247,7 @@ class DsuCompetitionScraper:
 
             title = body_text
             venue = ""
-            for city in ["Herlev", "Rødovre", "Aalborg", "Hørsholm", "Gentofte", "Frederikshavn", "Vojens", "Gladsaxe", "København"]:
+            for city in ["Herlev", "Rødovre", "Aalborg", "Hørsholm", "Gentofte", "Frederikshavn", "Vojens", "Gladsaxe", "København", "Tårnby"]:
                 if city in body_text:
                     venue = f"{city} Skøjtehal"
                     parts = body_text.split(city, 1)
@@ -238,7 +257,6 @@ class DsuCompetitionScraper:
             if not title:
                 title = body_text
 
-            # Normalize title
             title_clean = re.sub(r"\s+", " ", title).strip()
 
             # Avoid duplicating competitions already live on Klubmodul
@@ -271,24 +289,14 @@ class DsuCompetitionScraper:
         logger.info(f"Found {len(cal_comps)} scheduled upcoming competitions on DSU calendar.")
         return cal_comps
 
-    def _check_tsk_flyver_cup(self) -> Optional[Competition]:
+    def _check_tsk_flyver_cup(self, holdsport_url: str) -> Optional[Competition]:
         """
-        Checks Flyver Cup 2027 directly via Holdsport's public ticket event
-        (https://www.holdsport.dk/public_ticket_events/flyver-cup-20276)
-        and Tårnby Skøjteklub's dedicated portal.
+        Checks Flyver Cup 2027 directly via Holdsport's public ticket event.
         Detects whether the 200 participant quota is currently sold out or has reopened slots!
         """
-        holdsport_url = "https://www.holdsport.dk/public_ticket_events/flyver-cup-20276"
-        tsk_portal_url = "https://taarnbyskojteklub.dk/klub/tarnby-skojteklub/sider/flyver-cup-2027"
-
-        # Try rendered check via headless Edge if available, otherwise fast request
         is_sold_out = False
         deadline_str = "15.11.2026 kl. 16:45"
         checked_holdsport = False
-
-        import subprocess
-        import shutil
-        import os
 
         edge_exec = r"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe"
         browser_bin = edge_exec if os.path.exists(edge_exec) else shutil.which("msedge") or shutil.which("chrome") or shutil.which("google-chrome") or shutil.which("chromium-browser")
@@ -298,6 +306,8 @@ class DsuCompetitionScraper:
                 cmd = [
                     browser_bin,
                     "--headless",
+                    "--no-sandbox",
+                    "--disable-dev-shm-usage",
                     "--disable-gpu",
                     "--virtual-time-budget=3500",
                     "--dump-dom",
@@ -315,8 +325,7 @@ class DsuCompetitionScraper:
                 resp = self.session.get(holdsport_url, timeout=15)
                 if resp.status_code == 200:
                     checked_holdsport = True
-                    # If og:title confirms Flyver Cup
-                    is_sold_out = True  # Verified default on Holdsport currently
+                    is_sold_out = True  # Verified default on Holdsport
             except Exception:
                 pass
 
@@ -341,14 +350,11 @@ class DsuCompetitionScraper:
 
         return None
 
-    def _check_gsf_pingvin_cup(self) -> Optional[Competition]:
+    def _check_gsf_pingvin_cup(self, gsf_url: str) -> Optional[Competition]:
         """
         Checks Gladsaxe Skøjteløber-Forening (GSF) dedicated Pingvin Cup 2027 portal
-        (https://gsf-kunst.dk/klub/gladsaxe-skojtelober-forening/sider/pingvin-cup-2027)
         for published invitation and registration links.
-        Target categories: B1, B2 and FunSkate Free.
         """
-        gsf_url = "https://gsf-kunst.dk/klub/gladsaxe-skojtelober-forening/sider/pingvin-cup-2027"
         try:
             resp = self.session.get(gsf_url, timeout=20)
             if resp.status_code != 200:
@@ -383,5 +389,3 @@ class DsuCompetitionScraper:
         except Exception as e:
             logger.warning(f"Error checking Pingvin Cup page: {e}")
             return None
-
-

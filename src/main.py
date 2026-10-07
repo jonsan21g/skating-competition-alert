@@ -28,21 +28,33 @@ if hasattr(sys.stdout, "reconfigure"):
         pass
 
 
-def print_status_table(competitions: List[Competition]) -> None:
+def print_status_table(competitions: List[Competition], show_all: bool = False) -> None:
     """Renders a clean, informative terminal status table of competitions."""
-    sep = "=" * 105
-    header = f"{'ID':<6} | {'COMPETITION':<35} | {'STATUS':<9} | {'SPOTS':<9} | {'DEADLINE':<11} | {'VENUE':<25}"
+    monitor = CompetitionMonitor()
+    
+    # Partition into watched vs other
+    watched_comps = []
+    other_comps = []
+    for c in competitions:
+        is_watched, _ = monitor.match_watchlist(c)
+        if is_watched:
+            watched_comps.append(c)
+        else:
+            other_comps.append(c)
+
+    display_list = watched_comps if not show_all else (watched_comps + other_comps)
+
+    sep = "=" * 115
+    header = f"{'ID':<30} | {'COMPETITION':<35} | {'STATUS':<9} | {'SPOTS':<9} | {'DEADLINE':<18} | {'VENUE':<20}"
     print("\n" + sep)
-    print("               DANISH FIGURE SKATING (DSU) COMPETITION REGISTRATION STATUS")
+    print("                     TRACKED FIGURE SKATING COMPETITION REGISTRATION STATUS")
     print(sep)
     print(header)
-    print("-" * 105)
+    print("-" * 115)
 
-    for c in competitions:
-        # Determine spots string
+    for c in display_list:
         spots = f"{c.spots_taken}/{c.spots_max}" if c.spots_max else f"{c.spots_taken}"
         
-        # Color or tag status
         status_disp = c.status
         if c.is_sold_out and not c.is_closed:
             status_disp = "SOLD OUT"
@@ -52,13 +64,19 @@ def print_status_table(competitions: List[Competition]) -> None:
             status_disp = "CLOSED"
 
         title_short = (c.title[:32] + "...") if len(c.title) > 35 else c.title
-        venue_short = (c.venue[:22] + "...") if len(c.venue) > 25 else (c.venue or "-")
+        venue_short = (c.venue[:17] + "...") if len(c.venue) > 20 else (c.venue or "-")
+        id_short = (c.event_id[:27] + "...") if len(c.event_id) > 30 else c.event_id
+        deadline_short = (c.deadline[:16] + "...") if len(c.deadline) > 18 else c.deadline
 
         print(
-            f"{c.event_id:<6} | {title_short:<35} | {status_disp:<9} | {spots:<9} | {c.deadline:<11} | {venue_short:<25}"
+            f"{id_short:<30} | {title_short:<35} | {status_disp:<9} | {spots:<9} | {deadline_short:<18} | {venue_short:<20}"
         )
 
-    print(sep + "\n")
+    print(sep)
+    if not show_all and other_comps:
+        print(f"Showing {len(watched_comps)} tracked competitions. Use --all to view {len(other_comps)} other DSU events.\n")
+    else:
+        print()
 
 
 def cmd_watch(name: str) -> None:
@@ -66,7 +84,6 @@ def cmd_watch(name: str) -> None:
     data = load_watchlist()
     watched = data.get("watched_competitions", [])
 
-    # Check if already in list
     for w in watched:
         if w.get("name", "").lower() == name.lower():
             print(f"Competition '{name}' is already being monitored.")
@@ -78,7 +95,6 @@ def cmd_watch(name: str) -> None:
         "alert_on_open": True,
         "alert_on_sold_out": True,
         "alert_on_reopened": True,
-        "alert_deadline_hours": [48, 24],
     }
     watched.append(new_entry)
     data["watched_competitions"] = watched
@@ -101,14 +117,14 @@ def cmd_unwatch(name: str) -> None:
 
 
 def cmd_test_alert() -> None:
-    """Sends a sample test alert across all configured notifiers."""
+    """Sends a sample test alert across configured notifiers (WhatsApp / Console)."""
     sample_comp = Competition(
-        event_id="999",
-        title="Test Skøjte Cup 2026",
-        dates="15.12.2026-17.12.2026",
-        deadline="01.12.2026",
-        venue="Skøjteklub København",
-        price="535 kr.",
+        event_id="tsk_flyver_cup_2027",
+        title="Flyver Cup 2027 (Tårnby Skøjteklub)",
+        dates="12.02.2027-14.02.2027",
+        deadline="15.11.2026 kl. 16:45",
+        venue="Tårnby Skøjtehal",
+        price="575 kr.",
         status="Åben",
         spots_taken=199,
         spots_max=200,
@@ -116,12 +132,12 @@ def cmd_test_alert() -> None:
         is_open=True,
         is_sold_out=False,
         is_closed=False,
-        registration_url="https://dsu.klub-modul.dk/cms/EventOverviewList.aspx",
+        registration_url="https://www.holdsport.dk/public_ticket_events/flyver-cup-20276",
     )
     alert = AlertEvent(
         alert_type=AlertType.SPOT_REOPENED,
         competition=sample_comp,
-        message="A spot just reopened for Test Skøjte Cup 2026! 1 spot available.",
+        message="A spot just reopened for Flyver Cup 2027! 1 spot available.",
         old_spots_taken=200,
         new_spots_taken=199,
     )
@@ -138,7 +154,7 @@ def cmd_test_alert() -> None:
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description="Dansk Skøjte Union (DSU) Skating Competition Registration Alert Engine"
+        description="Figure Skating Competition Registration Alert Engine (WhatsApp & DSU)"
     )
     parser.add_argument(
         "--check",
@@ -148,7 +164,12 @@ def main() -> None:
     parser.add_argument(
         "--status",
         action="store_true",
-        help="Display current live registration status table of all DSU competitions",
+        help="Display current live registration status table of tracked competitions",
+    )
+    parser.add_argument(
+        "--all",
+        action="store_true",
+        help="When used with --status, displays all scraped DSU competitions",
     )
     parser.add_argument(
         "--daemon",
@@ -199,7 +220,7 @@ def main() -> None:
     if args.status:
         scraper = DsuCompetitionScraper()
         competitions = scraper.fetch_competitions()
-        print_status_table(competitions)
+        print_status_table(competitions, show_all=args.all)
         return
 
     monitor = CompetitionMonitor()
@@ -210,7 +231,7 @@ def main() -> None:
         )
         try:
             while True:
-                logger.info(f"Checking DSU competitions at {datetime.now().strftime('%H:%M:%S')}...")
+                logger.info(f"Checking competitions at {datetime.now().strftime('%H:%M:%S')}...")
                 monitor.run_check(dry_run=args.dry_run)
                 time.sleep(args.interval)
         except KeyboardInterrupt:
@@ -218,12 +239,12 @@ def main() -> None:
         return
 
     # Default action: single check
-    logger.info("Executing single DSU competition check...")
+    logger.info("Executing single competition check...")
     alerts = monitor.run_check(dry_run=args.dry_run)
     if alerts:
         print(f"\nDispatched {len(alerts)} notification alert(s)!")
     else:
-        print("\nAll clear! No new openings or spot changes detected.")
+        print("\nAll clear! No new openings or spot changes detected for tracked competitions.")
 
 
 if __name__ == "__main__":

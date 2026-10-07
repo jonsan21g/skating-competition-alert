@@ -1,81 +1,58 @@
 {
   "global_settings": {
-    "alert_on_any_new_open": true,
     "warn_low_spots_threshold": 5,
     "check_interval_seconds": 300
   },
   "watched_competitions": [
     {
-      "name": "Sjællands Cup",
-      "keywords": ["Sjællands Cup", "Sjaellands Cup"],
+      "name": "Forårskonkurrence Øst",
+      "keywords": [
+        "Forårskonkurrence Øst",
+        "Foraarskonkurrence Oest",
+        "Foraarskonkurrence Øst",
+        "Forårskonkurrence",
+        "Foraarskonkurrence",
+        "FKO"
+      ],
+      "source_ids": ["dsu_klubmodul", "dsu_calendar"],
       "alert_on_open": true,
       "alert_on_sold_out": true,
-      "alert_on_reopened": true,
-      "alert_deadline_hours": [48, 24]
-    },
-    {
-      "name": "Sjællands Mesterskaberne",
-      "keywords": ["Sjællands Mesterskab", "Sjaellands Mesterskab"],
-      "alert_on_open": true,
-      "alert_on_sold_out": true,
-      "alert_on_reopened": true,
-      "alert_deadline_hours": [48, 24]
-    },
-    {
-      "name": "HSK Cup",
-      "keywords": ["HSK Cup", "Hvidovre"],
-      "alert_on_open": true,
-      "alert_on_sold_out": true,
-      "alert_on_reopened": true,
-      "alert_deadline_hours": [48, 24]
+      "alert_on_reopened": true
     },
     {
       "name": "Isblomsten",
-      "keywords": ["Isblomsten"],
+      "keywords": [
+        "Isblomsten",
+        "Isblomst"
+      ],
+      "source_ids": ["dsu_klubmodul", "dsu_calendar"],
       "alert_on_open": true,
       "alert_on_sold_out": true,
-      "alert_on_reopened": true,
-      "alert_deadline_hours": [48, 24]
-    },
-    {
-      "name": "Jysk-Fynsk Cup",
-      "keywords": ["Jysk-Fynsk Cup", "Jysk/Fynsk Cup"],
-      "alert_on_open": true,
-      "alert_on_sold_out": true,
-      "alert_on_reopened": true,
-      "alert_deadline_hours": [48, 24]
-    },
-    {
-      "name": "Flyver Cup",
-      "keywords": ["Flyver Cup", "Flyver"],
-      "alert_on_open": true,
-      "alert_on_sold_out": true,
-      "alert_on_reopened": true,
-      "alert_deadline_hours": [48, 24]
-    },
-    {
-      "name": "Forårskonkurrence / Forårsfinalen",
-      "keywords": ["Forårskonkurrence", "Forårsfinale", "Foraarskonkurrence", "Foraarsfinale", "Friløbskonkurrence"],
-      "alert_on_open": true,
-      "alert_on_sold_out": true,
-      "alert_on_reopened": true,
-      "alert_deadline_hours": [48, 24]
+      "alert_on_reopened": true
     },
     {
       "name": "Pingvin Cup",
-      "keywords": ["Pingvin Cup", "Pingvin", "Pingvincup"],
+      "keywords": [
+        "Pingvin Cup",
+        "Pingvin",
+        "Pingvincup"
+      ],
+      "source_ids": ["dsu_klubmodul", "dsu_calendar", "gsf_pingvin_cup"],
       "alert_on_open": true,
       "alert_on_sold_out": true,
-      "alert_on_reopened": true,
-      "alert_deadline_hours": [48, 24]
+      "alert_on_reopened": true
     },
     {
-      "name": "Danmarks Cup / DM",
-      "keywords": ["Danmarks Cup", "Danmarksmesterskab", "DM "],
+      "name": "Flyver Cup",
+      "keywords": [
+        "Flyver Cup",
+        "Flyver",
+        "Flyvercup"
+      ],
+      "source_ids": ["holdsport_flyver_cup", "dsu_klubmodul"],
       "alert_on_open": true,
       "alert_on_sold_out": true,
-      "alert_on_reopened": true,
-      "alert_deadline_hours": [48, 24]
+      "alert_on_reopened": true
     }
   ]
 }

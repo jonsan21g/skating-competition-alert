@@ -1,182 +1,112 @@
 # Figure Skating Competition Registration Alert (`skating-competition-alert`)
 
-Automated real-time monitoring and alerting engine for **Dansk Skøjte Union (DSU)** figure skating competition registrations.
-
-Detects the exact moment a competition opens for registration, and alerts immediately if a **sold-out competition frees up a slot** before the registration deadline so you can register Joanne before slots vanish.
+Automated real-time monitoring and alerting engine for Danish figure skating (**Dansk Skøjte Union / DSU**) competitions, focused strictly on 4 target events and delivering instant alerts via **WhatsApp** (CallMeBot).
 
 ---
 
-## 🎯 Key Capabilities
+## 🎯 Target Competitions Tracked
 
-1. ⛸️ **Instant Registration Open Alerts**:
-   - Dispatches a notification the moment any watched competition (or any newly announced competition) transitions to `Åben` (Open) status.
-   - Provides direct one-click enrollment links to DSU Klubmodul.
-2. 🚨 **Sold-Out Slot Reopened Alerts (Primary Feature)**:
-   - When a competition reaches capacity (e.g. `200/200` skaters), the system flags it as sold out and begins high-frequency monitoring.
-   - The instant a skater withdraws or cancels (e.g. dropping to `199/200`) while registration is still not officially closed (`Lukket`), the system sends an urgent **"SPOT REOPENED!"** alert with direct signup links.
-3. 📈 **Capacity Expansion Detection**:
-   - Alerts when organizers expand the maximum quota (e.g. from 200 to 250 skaters).
-4. ⚡ **Low Spots Remaining Warning**:
-   - Warns when fewer than 5 spots remain so you can register before it caps out.
-5. 📲 **Multi-Channel Dispatch**:
-   - **WhatsApp** via CallMeBot API (zero-config, matches `electricity-price-notification`).
-   - **Telegram** via Telegram Bot API.
-   - **Discord** via Webhooks.
-   - **Email** via standard SMTP.
-   - **Console / Terminal** for live interactive viewing.
+The engine monitors registration availability and sold-out slot reopenings exclusively for:
+
+1. 🌸 **Forårskonkurrence Øst** (FKO / Rødovre Skøjtehal, 09–10 Jan 2027) — *Currently announced on Terminsplan; registration not open yet.*
+2. ❄️ **Isblomsten** (Herlev Skøjtehal, 30–31 Jan 2027) — *Currently announced on Terminsplan; registration not open yet.*
+3. 🐧 **Pingvin Cup** (Gladsaxe Skøjtehal / GSF, 03–04 Apr 2027) — *Portal active; registration not open yet.*
+4. ✈️ **Flyver Cup** (Tårnby Skøjtehal / TSK, 12–14 Feb 2027) — *Currently **SOLD OUT** (200/200 participants reached on Holdsport), but **NOT CLOSED** (deadline 15 Nov 2026 kl. 16:45). Alerts immediately if any spot reopens!*
 
 ---
 
-## 📁 Project Structure
+## 🚨 Core Alert Capabilities
+
+- ⛸️ **Instant Registration Open Alerts**: Fires immediately when any of the 4 competitions officially opens for signups.
+- 🚨 **Sold-Out Slot Reopening Alerts (Primary Feature)**: Because Flyver Cup is capped at 200/200 participants but registration closes on 15 Nov 2026, the scraper monitors for cancellations. The instant a slot reopens (`spots_available > 0`), an urgent WhatsApp message is dispatched with direct registration links.
+- 💬 **WhatsApp Dispatch (Zero Cost)**: Uses the CallMeBot API (shared with `electricity-price-notification`).
+
+---
+
+## ⚙️ Dual Configuration Files (`config/`)
+
+The configuration is partitioned into two dedicated JSON files:
+
+1. **`config/watchlist.json`**:
+   Declares the 4 watched competitions, keyword aliases, and alert transition rules (`alert_on_open`, `alert_on_sold_out`, `alert_on_reopened`).
+
+2. **`config/sources.json`**:
+   Declares the exact external portals and URLs where the scraper checks each competition:
+   - `dsu_klubmodul`: Central DSU registration list (`https://dsu.klub-modul.dk/cms/EventOverviewList.aspx`)
+   - `dsu_calendar`: DSU Official Terminsplan / Calendar (`https://www.danskate.dk/events/`)
+   - `holdsport_flyver_cup`: Dedicated Flyver Cup Holdsport ticket portal (`https://www.holdsport.dk/public_ticket_events/flyver-cup-20276`)
+   - `gsf_pingvin_cup`: Dedicated GSF Pingvin Cup portal (`https://gsf-kunst.dk/klub/gladsaxe-skojtelober-forening/sider/pingvin-cup-2027`)
+
+---
+
+## 📁 Project Architecture
 
 ```text
 skating-competition-alert/
 ├── .github/
 │   └── workflows/
-│       └── competition-alert.yml   # Automated GitHub Actions runner (every 30m)
+│       └── competition-alert.yml   # Twice-daily GitHub Actions runner (07:09 & 19:09 CET)
 ├── config/
-│   └── watchlist.json              # Targeted competitions, keywords, and alert rules
+│   ├── watchlist.json              # The 4 target competitions & alert rules
+│   └── sources.json                # Scraper URLs & monitored endpoints
 ├── data/
-│   └── state.json                  # Persistent state snapshot across runs
+│   └── state.json                  # Persistent registration snapshot across runs
 ├── src/
 │   ├── config.py                   # App configuration and .env parser
-│   ├── models.py                   # Competition and AlertEvent data models
-│   ├── scraper.py                  # DSU Klubmodul HTML scraper and parser
-│   ├── monitor.py                  # State diffing & transition detector
-│   ├── notifiers/                  # Notification dispatchers
-│   │   ├── whatsapp.py             # CallMeBot WhatsApp dispatcher
-│   │   ├── telegram.py             # Telegram bot dispatcher
-│   │   ├── discord.py              # Discord webhook dispatcher
-│   │   ├── email_notifier.py       # SMTP email dispatcher
-│   │   └── console.py              # Pretty terminal dispatcher
-│   └── main.py                     # CLI entrypoint and daemon runner
-├── tests/                          # 100% automated test suite
-├── .env.example                    # Sample environment variables
+│   ├── models.py                   # Competition & AlertEvent data models
+│   ├── scraper.py                  # Multi-source scraper (DSU, Holdsport, GSF, Terminsplan)
+│   ├── monitor.py                  # State transition engine & change detector
+│   ├── notifiers/                  # Clean notification dispatchers
+│   │   ├── base.py                 # Base notifier abstract interface
+│   │   ├── whatsapp.py             # WhatsApp CallMeBot dispatcher
+│   │   ├── console.py              # Pretty terminal logger
+│   │   └── __init__.py             # Notifier registry
+│   └── main.py                     # CLI entrypoint (--check, --status, --test-alert)
+├── tests/                          # 13 automated unit tests (100% passing)
+│   ├── test_monitor.py             # Reopened spots & transition detection tests
+│   ├── test_notifiers.py           # WhatsApp dispatch & CallMeBot tests
+│   ├── test_scraper.py             # HTML table parsing tests
+│   └── test_sources.py             # Dual config & 4-competition targeting tests
+├── .env.example                    # Sample WhatsApp credentials
 ├── requirements.txt                # Python dependencies (requests, beautifulsoup4)
 └── README.md
 ```
 
 ---
 
-## 🚀 Quick Start
+## ⏰ Automation Schedule (GitHub Actions)
 
-### 1. Install Dependencies
+The runner runs automatically twice daily on GitHub Actions:
+- **07:09 Danish Time** (06:09 UTC CET)
+- **19:09 Danish Time** (18:09 UTC CET)
+- **Cron**: `'9 6,18 * * *'`
 
-```powershell
-pip install -r requirements.txt
-```
-
-### 2. Configure Notifications
-
-Copy `.env.example` to `.env`:
-
-```powershell
-cp .env.example .env
-```
-
-To enable **WhatsApp** alerts via CallMeBot (same gateway as your electricity notifications):
-
-```ini
-NOTIFIERS_ENABLED=console,whatsapp
-CALLMEBOT_PHONE=45XXXXXXXX
-CALLMEBOT_API_KEY=your_callmebot_api_key
-```
-
-### 3. Verify Alert Dispatch
-
-Send a test alert across your active channels:
-
-```powershell
-python -m src.main --test-alert
-```
+### GitHub Secrets Required:
+| Secret Name | Description | Example |
+|---|---|---|
+| `CALLMEBOT_PHONE` | Phone number with country code (no `+` or spaces) | `4512345678` |
+| `CALLMEBOT_API_KEY` | CallMeBot WhatsApp API key | `1234567` |
 
 ---
 
 ## 💻 CLI Commands
 
-### 📊 View Live Competition Table
-Fetches live data from DSU Klubmodul and displays current spots, deadlines, and registration status:
-
+### 1. View Current Status of the 4 Competitions
 ```powershell
 python -m src.main --status
 ```
 
-Example Output:
-```text
-=========================================================================================================
-               DANISH FIGURE SKATING (DSU) COMPETITION REGISTRATION STATUS
-=========================================================================================================
-ID     | COMPETITION                         | STATUS    | SPOTS     | DEADLINE    | VENUE                    
----------------------------------------------------------------------------------------------------------
-69     | Sjællands Cup  2026                 | OPEN      | 29/200    | 08.10.2026  | Skøjteklub København     
-68     | Sjællands Mesterskaberne  2026      | OPEN      | 30/200    | 08.10.2026  | Skøjteklub København     
-75     | FunSkate 1 VEST (Element & Free)    | OPEN      | 33/350    | 15.10.2026  | SE Arena                 
-84     | NTG Samling                         | OPEN      | 8/100     | 06.11.2026  | Tårnby Skøjtehal         
-67     | Jysk-Fynsk Cup  2026                | CLOSED    | 32/200    | 24.09.2026  | Frederikshavn Skøjtefo...
-=========================================================================================================
-```
-
-### 🔍 Run a Single Check
-Scrapes DSU, compares with previous snapshot, sends alerts if changes occurred, and updates `data/state.json`:
-
+### 2. Run a Single Check & Dispatch Alert if Changed
 ```powershell
 python -m src.main --check
 ```
 
-### 🔁 Run Background Monitoring Daemon
-Keeps running continuously, checking every 300 seconds (5 minutes) or custom interval:
-
+### 3. Send a Test WhatsApp Alert
 ```powershell
-python -m src.main --daemon --interval 180
+python -m src.main --test-alert
 ```
 
-### 🎯 Manage Watched Competitions
-Add or remove competitions from `config/watchlist.json` directly from CLI:
-
-```powershell
-python -m src.main --watch "Isblomsten"
-python -m src.main --unwatch "Isblomsten"
-```
-
----
-
-## ⚙️ Customizing the Watchlist (`config/watchlist.json`)
-
-You can customize keyword rules and per-competition triggers:
-
-```json
-{
-  "global_settings": {
-    "alert_on_any_new_open": true,
-    "warn_low_spots_threshold": 5,
-    "check_interval_seconds": 300
-  },
-  "watched_competitions": [
-    {
-      "name": "Sjællands Cup",
-      "keywords": ["Sjællands Cup", "Sjaellands Cup"],
-      "alert_on_open": true,
-      "alert_on_sold_out": true,
-      "alert_on_reopened": true,
-      "alert_deadline_hours": [48, 24]
-    },
-    {
-      "name": "Isblomsten",
-      "keywords": ["Isblomsten"],
-      "alert_on_open": true,
-      "alert_on_sold_out": true,
-      "alert_on_reopened": true
-    }
-  ]
-}
-```
-
----
-
-## 🧪 Automated Tests
-
-Run the test suite:
-
+### 4. Run Automated Tests
 ```powershell
 python -m unittest discover tests
 ```

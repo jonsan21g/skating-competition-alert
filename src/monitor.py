@@ -84,24 +84,27 @@ class CompetitionMonitor:
     ) -> List[AlertEvent]:
         """
         Compares freshly scraped competitions against previous state.
+        Only processes competitions that match the configured watchlist.
         Detects newly opened competitions, capacity changes, and reopened slots.
         """
         alerts: List[AlertEvent] = []
         global_settings = self.watchlist_cfg.get("global_settings", {})
-        alert_on_any_new = global_settings.get("alert_on_any_new_open", True)
         low_spots_thresh = global_settings.get("warn_low_spots_threshold", 5)
 
         for curr in current_comps:
             matched, rules = self.match_watchlist(curr)
+            # Strictly monitor only competitions matching the watchlist
+            if not matched:
+                continue
+
             prev = prev_state.get(curr.event_id)
 
-            # Rule flags with sensible defaults
-            alert_on_open = rules.get("alert_on_open", True) if matched else alert_on_any_new
-            alert_on_sold_out = rules.get("alert_on_sold_out", True) if matched else False
-            alert_on_reopened = rules.get("alert_on_reopened", True) if matched else True
+            alert_on_open = rules.get("alert_on_open", True)
+            alert_on_sold_out = rules.get("alert_on_sold_out", True)
+            alert_on_reopened = rules.get("alert_on_reopened", True)
 
             # ------------------------------------------------------------------
-            # Scenario A: Brand new competition discovered
+            # Scenario A: First time this watched competition is observed
             # ------------------------------------------------------------------
             if prev is None:
                 if curr.is_open and curr.spots_available > 0 and alert_on_open:
@@ -123,7 +126,7 @@ class CompetitionMonitor:
                 continue
 
             # ------------------------------------------------------------------
-            # Scenario B: Known competition state transitions
+            # Scenario B: Known watched competition state transitions
             # ------------------------------------------------------------------
 
             # 1. SPOT REOPENED! (Highest priority: was sold out, now has a spot open!)
@@ -194,11 +197,10 @@ class CompetitionMonitor:
         Executes a single check cycle:
         1. Loads previous state.
         2. Scrapes current competitions.
-        3. Detects actionable changes.
-        4. Dispatches notifications.
-        5. Saves updated state (unless dry_run).
+        3. Detects actionable changes on watched competitions.
+        4. Dispatches WhatsApp/Console notifications.
+        5. Saves updated state of watched competitions.
         """
-        # Reload watchlist configuration in case user updated it
         self.watchlist_cfg = load_watchlist()
 
         prev_state = self.load_state()
@@ -218,10 +220,11 @@ class CompetitionMonitor:
                     except Exception as e:
                         logger.error(f"Notifier error: {e}")
         else:
-            logger.info("No new registration status changes detected.")
+            logger.info("No new registration status changes detected for watched competitions.")
 
         if not dry_run:
-            new_state = {c.event_id: c for c in current_comps}
+            # Persist only watched competitions to keep state lean and accurate
+            new_state = {c.event_id: c for c in current_comps if self.match_watchlist(c)[0]}
             self.save_state(new_state)
 
         return alerts

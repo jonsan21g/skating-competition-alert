@@ -2,8 +2,8 @@ name: Figure Skating Competition Registration Alert
 
 on:
   schedule:
-    # Run every 30 minutes
-    - cron: '*/30 * * * *'
+    # Runs twice daily at 07:09 and 19:09 Danish Time (06:09 & 18:09 UTC in CET)
+    - cron: '9 6,18 * * *'
   workflow_dispatch:
     inputs:
       dry_run:
@@ -33,12 +33,9 @@ jobs:
 
       - name: Run Competition Registration Scanner
         env:
-          NOTIFIERS_ENABLED: ${{ secrets.NOTIFIERS_ENABLED || 'console,whatsapp' }}
+          NOTIFIERS_ENABLED: 'whatsapp,console'
           CALLMEBOT_PHONE: ${{ secrets.CALLMEBOT_PHONE }}
           CALLMEBOT_API_KEY: ${{ secrets.CALLMEBOT_API_KEY }}
-          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
-          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
         run: |
           if [ "${{ inputs.dry_run }}" = "true" ]; then
             python -m src.main --check --dry-run
@@ -54,6 +51,6 @@ jobs:
           if git diff --staged --quiet; then
             echo "No state changes to commit."
           else
-            git commit -m "chore(state): update DSU competition registration snapshot [skip ci]"
+            git commit -m "chore(state): update tracked competition registration snapshot [skip ci]"
             git push
           fi

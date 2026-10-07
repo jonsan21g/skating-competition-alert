@@ -10,6 +10,7 @@ CONFIG_DIR = PROJECT_ROOT / "config"
 DATA_DIR = PROJECT_ROOT / "data"
 STATE_FILE = DATA_DIR / "state.json"
 WATCHLIST_FILE = CONFIG_DIR / "watchlist.json"
+SOURCES_FILE = CONFIG_DIR / "sources.json"
 ENV_FILE = PROJECT_ROOT / ".env"
 
 
@@ -43,7 +44,6 @@ def load_watchlist() -> Dict[str, Any]:
     if not WATCHLIST_FILE.exists():
         return {
             "global_settings": {
-                "alert_on_any_new_open": True,
                 "warn_low_spots_threshold": 5,
                 "check_interval_seconds": 300,
             },
@@ -60,13 +60,21 @@ def save_watchlist(data: Dict[str, Any]) -> None:
         json.dump(data, f, indent=2, ensure_ascii=False)
 
 
+def load_sources() -> Dict[str, Any]:
+    """Loads sources.json configuration defining scrape URLs."""
+    if not SOURCES_FILE.exists():
+        return {"sources": []}
+    with open(SOURCES_FILE, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+
 class AppConfig:
-    """Unified application settings."""
+    """Unified application settings (WhatsApp via CallMeBot + Console)."""
 
     # Notification settings
     NOTIFIERS_ENABLED: List[str] = [
         n.strip().lower()
-        for n in os.getenv("NOTIFIERS_ENABLED", "console").split(",")
+        for n in os.getenv("NOTIFIERS_ENABLED", "console,whatsapp").split(",")
         if n.strip()
     ]
 
@@ -74,26 +82,5 @@ class AppConfig:
     CALLMEBOT_PHONE: str = os.getenv("CALLMEBOT_PHONE", "").strip()
     CALLMEBOT_API_KEY: str = os.getenv("CALLMEBOT_API_KEY", "").strip()
 
-    # Telegram
-    TELEGRAM_BOT_TOKEN: str = os.getenv("TELEGRAM_BOT_TOKEN", "").strip()
-    TELEGRAM_CHAT_ID: str = os.getenv("TELEGRAM_CHAT_ID", "").strip()
-
-    # Discord
-    DISCORD_WEBHOOK_URL: str = os.getenv("DISCORD_WEBHOOK_URL", "").strip()
-
-    # Email
-    EMAIL_SMTP_HOST: str = os.getenv("EMAIL_SMTP_HOST", "smtp.gmail.com").strip()
-    EMAIL_SMTP_PORT: int = int(os.getenv("EMAIL_SMTP_PORT", "587"))
-    EMAIL_SMTP_USER: str = os.getenv("EMAIL_SMTP_USER", "").strip()
-    EMAIL_SMTP_PASSWORD: str = os.getenv("EMAIL_SMTP_PASSWORD", "").strip()
-    EMAIL_TO: str = os.getenv("EMAIL_TO", "").strip()
-
     # Scraper & Daemon settings
     CHECK_INTERVAL_SECONDS: int = int(os.getenv("CHECK_INTERVAL_SECONDS", "300"))
-    ALERT_ON_ANY_NEW_COMPETITION: bool = os.getenv(
-        "ALERT_ON_ANY_NEW_COMPETITION", "true"
-    ).lower() in ("true", "1", "yes")
-
-    # DSU URL
-    DSU_OVERVIEW_LIST_URL: str = "https://dsu.klub-modul.dk/cms/EventOverviewList.aspx"
-    DSU_BASE_URL: str = "https://dsu.klub-modul.dk/cms/"

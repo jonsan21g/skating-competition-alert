@@ -3,8 +3,7 @@
 import unittest
 from unittest.mock import patch, MagicMock
 from src.notifiers.whatsapp import WhatsAppNotifier
-from src.notifiers.telegram import TelegramNotifier
-from src.notifiers.discord import DiscordNotifier
+from src.notifiers.console import ConsoleNotifier
 
 
 class TestNotifiers(unittest.TestCase):
@@ -29,30 +28,22 @@ class TestNotifiers(unittest.TestCase):
         self.assertTrue(result)
         mock_get.assert_called_once()
 
-    @patch("requests.post")
-    def test_telegram_send_success(self, mock_post):
+    @patch("requests.get")
+    def test_whatsapp_send_failure(self, mock_get):
         mock_resp = MagicMock()
-        mock_resp.status_code = 200
-        mock_resp.json.return_value = {"ok": True}
-        mock_post.return_value = mock_resp
+        mock_resp.status_code = 500
+        mock_resp.text = "Internal Server Error"
+        mock_get.return_value = mock_resp
 
-        tg = TelegramNotifier(bot_token="test_token", chat_id="12345")
-        result = tg.send(subject="Test", message="Test Message")
+        wa = WhatsAppNotifier(phone="4512345678", api_key="test_key")
+        result = wa.send(subject="Test", message="Test Message")
 
-        self.assertTrue(result)
-        mock_post.assert_called_once()
+        self.assertFalse(result)
 
-    @patch("requests.post")
-    def test_discord_send_success(self, mock_post):
-        mock_resp = MagicMock()
-        mock_resp.status_code = 204
-        mock_post.return_value = mock_resp
-
-        dc = DiscordNotifier(webhook_url="https://discord.com/api/webhooks/123/xyz")
-        result = dc.send(subject="Test", message="Test Message")
-
-        self.assertTrue(result)
-        mock_post.assert_called_once()
+    def test_console_notifier(self):
+        cn = ConsoleNotifier()
+        self.assertTrue(cn.is_configured())
+        self.assertTrue(cn.send(subject="Test", message="Test Message"))
 
 
 if __name__ == "__main__":

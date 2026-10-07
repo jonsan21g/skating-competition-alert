@@ -1,0 +1,50 @@
+{
+  "sources": [
+    {
+      "id": "dsu_klubmodul",
+      "name": "DSU Klubmodul Registration Portal",
+      "type": "dsu_klubmodul",
+      "url": "https://dsu.klub-modul.dk/cms/EventOverviewList.aspx",
+      "base_url": "https://dsu.klub-modul.dk/cms/",
+      "competitions": [
+        "Forårskonkurrence Øst",
+        "Isblomsten",
+        "Pingvin Cup",
+        "Flyver Cup"
+      ],
+      "enabled": true
+    },
+    {
+      "id": "dsu_calendar",
+      "name": "DSU Official Terminsplan / Event Calendar",
+      "type": "dsu_calendar",
+      "url": "https://www.danskate.dk/events/",
+      "competitions": [
+        "Forårskonkurrence Øst",
+        "Isblomsten"
+      ],
+      "enabled": true
+    },
+    {
+      "id": "holdsport_flyver_cup",
+      "name": "Flyver Cup 2027 Holdsport Ticket Event",
+      "type": "holdsport_ticket",
+      "url": "https://www.holdsport.dk/public_ticket_events/flyver-cup-20276",
+      "club_url": "https://taarnbyskojteklub.dk/klub/tarnby-skojteklub/sider/flyver-cup-2027",
+      "competitions": [
+        "Flyver Cup"
+      ],
+      "enabled": true
+    },
+    {
+      "id": "gsf_pingvin_cup",
+      "name": "Pingvin Cup 2027 GSF Portal",
+      "type": "gsf_portal",
+      "url": "https://gsf-kunst.dk/klub/gladsaxe-skojtelober-forening/sider/pingvin-cup-2027",
+      "competitions": [
+        "Pingvin Cup"
+      ],
+      "enabled": true
+    }
+  ]
+}
