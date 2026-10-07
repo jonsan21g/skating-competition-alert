@@ -1,0 +1,57 @@
+{
+  "global_settings": {
+    "alert_on_any_new_open": true,
+    "warn_low_spots_threshold": 5,
+    "check_interval_seconds": 300
+  },
+  "watched_competitions": [
+    {
+      "name": "Sjællands Cup",
+      "keywords": ["Sjællands Cup", "Sjaellands Cup"],
+      "alert_on_open": true,
+      "alert_on_sold_out": true,
+      "alert_on_reopened": true,
+      "alert_deadline_hours": [48, 24]
+    },
+    {
+      "name": "Sjællands Mesterskaberne",
+      "keywords": ["Sjællands Mesterskab", "Sjaellands Mesterskab"],
+      "alert_on_open": true,
+      "alert_on_sold_out": true,
+      "alert_on_reopened": true,
+      "alert_deadline_hours": [48, 24]
+    },
+    {
+      "name": "HSK Cup",
+      "keywords": ["HSK Cup", "Hvidovre"],
+      "alert_on_open": true,
+      "alert_on_sold_out": true,
+      "alert_on_reopened": true,
+      "alert_deadline_hours": [48, 24]
+    },
+    {
+      "name": "Isblomsten",
+      "keywords": ["Isblomsten"],
+      "alert_on_open": true,
+      "alert_on_sold_out": true,
+      "alert_on_reopened": true,
+      "alert_deadline_hours": [48, 24]
+    },
+    {
+      "name": "Jysk-Fynsk Cup",
+      "keywords": ["Jysk-Fynsk Cup", "Jysk/Fynsk Cup"],
+      "alert_on_open": true,
+      "alert_on_sold_out": true,
+      "alert_on_reopened": true,
+      "alert_deadline_hours": [48, 24]
+    },
+    {
+      "name": "Danmarks Cup / DM",
+      "keywords": ["Danmarks Cup", "Danmarksmesterskab", "DM "],
+      "alert_on_open": true,
+      "alert_on_sold_out": true,
+      "alert_on_reopened": true,
+      "alert_deadline_hours": [48, 24]
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+
+# Environment and sensitive credentials
+.env
+
+# Runtime state data (optional if users want local-only tracking)
+# data/state.json can be checked in or ignored depending on GitHub Actions
+# We allow checking in state.json or keeping it persistent
+
+# Logs
+*.log
