@@ -1,42 +1,4 @@
 {
-  "dsu_cal_for_rskonkurrence__st": {
-    "event_id": "dsu_cal_for_rskonkurrence__st",
-    "title": "Forårskonkurrence Øst (Terminsplan)",
-    "dates": "09 jan lørdag",
-    "deadline": "Ikke åbnet endnu",
-    "venue": "Rødovre Skøjtehal",
-    "price": "-",
-    "status": "Kommende",
-    "spots_taken": 0,
-    "spots_max": 0,
-    "spots_available": 0,
-    "is_open": false,
-    "is_sold_out": false,
-    "is_closed": false,
-    "categories": [],
-    "registration_url": "https://www.danskate.dk/event/foraarskonkurrence-oest-2/",
-    "participants_url": "",
-    "last_seen": "2026-10-09T18:19:47.759896"
-  },
-  "dsu_cal_isblomsten": {
-    "event_id": "dsu_cal_isblomsten",
-    "title": "Isblomsten (Terminsplan)",
-    "dates": "30 jan lørdag",
-    "deadline": "Ikke åbnet endnu",
-    "venue": "Herlev Skøjtehal",
-    "price": "-",
-    "status": "Kommende",
-    "spots_taken": 0,
-    "spots_max": 0,
-    "spots_available": 0,
-    "is_open": false,
-    "is_sold_out": false,
-    "is_closed": false,
-    "categories": [],
-    "registration_url": "https://www.danskate.dk/event/isblomsten-3/",
-    "participants_url": "",
-    "last_seen": "2026-10-09T18:19:47.760015"
-  },
   "tsk_flyver_cup_2027": {
     "event_id": "tsk_flyver_cup_2027",
     "title": "Flyver Cup 2027 (Tårnby Skøjteklub)",
@@ -58,7 +20,7 @@
     ],
     "registration_url": "https://www.holdsport.dk/public_ticket_events/flyver-cup-20276",
     "participants_url": "",
-    "last_seen": "2026-10-09T18:20:04.779547"
+    "last_seen": "2026-10-10T11:09:45.554405"
   },
   "gsf_pingvin_cup_2027": {
     "event_id": "gsf_pingvin_cup_2027",
@@ -81,6 +43,6 @@
     ],
     "registration_url": "https://gsf-kunst.dk/klub/gladsaxe-skojtelober-forening/sider/pingvin-cup-2027",
     "participants_url": "",
-    "last_seen": "2026-10-09T18:20:10.916231"
+    "last_seen": "2026-10-10T11:09:46.850742"
   }
 }
