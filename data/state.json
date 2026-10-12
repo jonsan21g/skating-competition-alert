@@ -16,7 +16,7 @@
     "categories": [],
     "registration_url": "https://www.danskate.dk/event/foraarskonkurrence-oest-2/",
     "participants_url": "",
-    "last_seen": "2026-10-11T21:53:06.484460"
+    "last_seen": "2026-10-12T13:05:33.335205"
   },
   "dsu_cal_isblomsten": {
     "event_id": "dsu_cal_isblomsten",
@@ -35,30 +35,26 @@
     "categories": [],
     "registration_url": "https://www.danskate.dk/event/isblomsten-3/",
     "participants_url": "",
-    "last_seen": "2026-10-11T21:53:06.484580"
+    "last_seen": "2026-10-12T13:05:33.335327"
   },
-  "tsk_flyver_cup_2027": {
-    "event_id": "tsk_flyver_cup_2027",
-    "title": "Flyver Cup 2027 (Tårnby Skøjteklub)",
-    "dates": "12.02.2027-14.02.2027",
-    "deadline": "15.11.2026 kl. 16:45",
+  "dsu_cal_flyver_cup": {
+    "event_id": "dsu_cal_flyver_cup",
+    "title": "Flyver Cup (Terminsplan)",
+    "dates": "13 feb lørdag",
+    "deadline": "Ikke åbnet endnu",
     "venue": "Tårnby Skøjtehal",
-    "price": "575 kr.",
-    "status": "Udsolgt",
-    "spots_taken": 200,
-    "spots_max": 200,
+    "price": "-",
+    "status": "Kommende",
+    "spots_taken": 0,
+    "spots_max": 0,
     "spots_available": 0,
     "is_open": false,
-    "is_sold_out": true,
+    "is_sold_out": false,
     "is_closed": false,
-    "categories": [
-      "Sololøb B",
-      "Sololøb A",
-      "FunSkate"
-    ],
-    "registration_url": "https://www.holdsport.dk/public_ticket_events/flyver-cup-20276",
+    "categories": [],
+    "registration_url": "https://www.danskate.dk/event/flyver-cup/",
     "participants_url": "",
-    "last_seen": "2026-10-11T21:53:21.235133"
+    "last_seen": "2026-10-12T13:05:33.335403"
   },
   "gsf_pingvin_cup_2027": {
     "event_id": "gsf_pingvin_cup_2027",
@@ -81,6 +77,6 @@
     ],
     "registration_url": "https://gsf-kunst.dk/klub/gladsaxe-skojtelober-forening/sider/pingvin-cup-2027",
     "participants_url": "",
-    "last_seen": "2026-10-11T21:53:22.403844"
+    "last_seen": "2026-10-12T13:05:51.711413"
   }
 }
