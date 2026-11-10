@@ -16,26 +16,7 @@
     "categories": [],
     "registration_url": "https://www.danskate.dk/event/foraarskonkurrence-oest-2/",
     "participants_url": "",
-    "last_seen": "2026-11-10T13:25:49.115287"
-  },
-  "dsu_cal_isblomsten": {
-    "event_id": "dsu_cal_isblomsten",
-    "title": "Isblomsten (Terminsplan)",
-    "dates": "30 jan lørdag",
-    "deadline": "Ikke åbnet endnu",
-    "venue": "Herlev Skøjtehal",
-    "price": "-",
-    "status": "Kommende",
-    "spots_taken": 0,
-    "spots_max": 0,
-    "spots_available": 0,
-    "is_open": false,
-    "is_sold_out": false,
-    "is_closed": false,
-    "categories": [],
-    "registration_url": "https://www.danskate.dk/event/isblomsten-3/",
-    "participants_url": "",
-    "last_seen": "2026-11-10T13:25:49.115385"
+    "last_seen": "2026-11-10T23:14:03.620805"
   },
   "dsu_cal_flyver_cup": {
     "event_id": "dsu_cal_flyver_cup",
@@ -54,7 +35,26 @@
     "categories": [],
     "registration_url": "https://www.danskate.dk/event/flyver-cup/",
     "participants_url": "",
-    "last_seen": "2026-11-10T13:25:49.115443"
+    "last_seen": "2026-11-10T23:14:03.620918"
+  },
+  "hiku_811": {
+    "event_id": "hiku_811",
+    "title": "Registration Isblomsten 2027",
+    "dates": "30.01.2027-31.01.2027",
+    "deadline": "30.11.2026",
+    "venue": "Herlev Skating Arena",
+    "price": "0 kr.",
+    "status": "Åben",
+    "spots_taken": 0,
+    "spots_max": 0,
+    "spots_available": 0,
+    "is_open": true,
+    "is_sold_out": false,
+    "is_closed": false,
+    "categories": [],
+    "registration_url": "https://hiku.dk/cms/ProfileEventEnrollment.aspx?EventID=811",
+    "participants_url": "https://hiku.dk/cms/EventShowParticipants.aspx?EventID=811",
+    "last_seen": "2026-11-10T23:14:04.160279"
   },
   "gsf_pingvin_cup_2027": {
     "event_id": "gsf_pingvin_cup_2027",
@@ -77,6 +77,6 @@
     ],
     "registration_url": "https://gsf-kunst.dk/klub/gladsaxe-skojtelober-forening/sider/pingvin-cup-2027",
     "participants_url": "",
-    "last_seen": "2026-11-10T13:26:02.160503"
+    "last_seen": "2026-11-10T23:14:09.685445"
   }
 }
