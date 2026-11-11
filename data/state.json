@@ -1,22 +1,39 @@
 {
-  "dsu_cal_for_rskonkurrence__st": {
-    "event_id": "dsu_cal_for_rskonkurrence__st",
-    "title": "Forårskonkurrence Øst (Terminsplan)",
-    "dates": "09 jan lørdag",
-    "deadline": "Ikke åbnet endnu",
-    "venue": "Rødovre Skøjtehal",
-    "price": "-",
-    "status": "Kommende",
-    "spots_taken": 0,
-    "spots_max": 0,
-    "spots_available": 0,
-    "is_open": false,
+  "98": {
+    "event_id": "98",
+    "title": "Forårskonkurrencen  ØST 2027",
+    "dates": "09.01.2027-10.01.2027",
+    "deadline": "29.11.2026",
+    "venue": "Rødovre",
+    "price": "1 kr.",
+    "status": "Åben",
+    "spots_taken": 12,
+    "spots_max": 500,
+    "spots_available": 488,
+    "is_open": true,
     "is_sold_out": false,
     "is_closed": false,
-    "categories": [],
-    "registration_url": "https://www.danskate.dk/event/foraarskonkurrence-oest-2/",
-    "participants_url": "",
-    "last_seen": "2026-11-11T12:40:42.592164"
+    "categories": [
+      "Cubs B1 Mixed",
+      "Springs B1 Mixed",
+      "Novice B1 Girls",
+      "Novice B1 Boys",
+      "Junior B1 Women",
+      "Junior B1 Men",
+      "Senior B1 Women",
+      "Senior B1 Men",
+      "Cubs B2 Mixed",
+      "Springs B2 Mixed",
+      "Novice B2 Girls",
+      "Novice B2 Boys",
+      "Junior B2 Women",
+      "Junior B2 Men",
+      "Senior B2 Women",
+      "Senior B2 Men"
+    ],
+    "registration_url": "https://dsu.klub-modul.dk/cms/ProfileEventEnrollment.aspx?EventID=98",
+    "participants_url": "https://dsu.klub-modul.dk/cms/EventShowParticipants.aspx?EventID=98",
+    "last_seen": "2026-11-11T16:35:49.817760"
   },
   "dsu_cal_flyver_cup": {
     "event_id": "dsu_cal_flyver_cup",
@@ -35,7 +52,7 @@
     "categories": [],
     "registration_url": "https://www.danskate.dk/event/flyver-cup/",
     "participants_url": "",
-    "last_seen": "2026-11-11T12:40:42.592283"
+    "last_seen": "2026-11-11T16:35:51.421574"
   },
   "hiku_811": {
     "event_id": "hiku_811",
@@ -44,17 +61,24 @@
     "deadline": "30.11.2026",
     "venue": "Herlev Skating Arena",
     "price": "0 kr.",
-    "status": "Kommende",
+    "status": "Åben",
     "spots_taken": 0,
     "spots_max": 0,
-    "spots_available": 0,
-    "is_open": false,
+    "spots_available": 1,
+    "is_open": true,
     "is_sold_out": false,
     "is_closed": false,
-    "categories": [],
+    "categories": [
+      "Category B2",
+      "Category B1",
+      "Category A1",
+      "Category A2",
+      "PRACTICE - Friday (Main Rink)",
+      "Pre-order Competition T-shirt"
+    ],
     "registration_url": "https://hiku.dk/cms/ProfileEventEnrollment.aspx?EventID=811",
     "participants_url": "https://hiku.dk/cms/EventShowParticipants.aspx?EventID=811",
-    "last_seen": "2026-11-11T12:40:43.375284"
+    "last_seen": "2026-11-11T16:35:52.073780"
   },
   "gsf_pingvin_cup_2027": {
     "event_id": "gsf_pingvin_cup_2027",
@@ -77,6 +101,6 @@
     ],
     "registration_url": "https://gsf-kunst.dk/klub/gladsaxe-skojtelober-forening/sider/pingvin-cup-2027",
     "participants_url": "",
-    "last_seen": "2026-11-11T12:41:00.198959"
+    "last_seen": "2026-11-11T16:36:06.783811"
   }
 }
