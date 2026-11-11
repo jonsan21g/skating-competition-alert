@@ -97,10 +97,11 @@ class AlertEvent:
             )
         elif self.alert_type in (AlertType.NEW_OPEN, AlertType.REGISTRATION_OPENED):
             header = "⛸️ [DSU SKATING ALERT] REGISTRATION OPEN!"
+            spots_str = f"{comp.spots_available} / {comp.spots_max}" if comp.spots_max > 0 else "Open"
             body = (
                 f"{header}\n\n"
                 f"🏆 {comp.title}\n"
-                f"🎟️ Available Spots: {comp.spots_available} / {comp.spots_max}\n"
+                f"🎟️ Available Spots: {spots_str}\n"
                 f"📍 Venue: {comp.venue or 'TBA'}\n"
                 f"📅 Dates: {comp.dates}\n"
                 f"⏰ Deadline: {comp.deadline}\n"

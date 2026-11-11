@@ -7,12 +7,16 @@
     {
       "name": "Forårskonkurrence Øst",
       "keywords": [
+        "Forårskonkurrencen  ØST",
+        "Forårskonkurrencen Øst",
         "Forårskonkurrence Øst",
-        "Foraarskonkurrence Oest",
+        "Foraarskonkurrencen Øst",
         "Foraarskonkurrence Øst",
-        "Forårskonkurrence øst",
-        "Foraarskonkurrence oest",
+        "Foraarskonkurrencen Oest",
+        "Foraarskonkurrence Oest",
+        "Forårskonkurrencen - Øst",
         "Forårskonkurrence - Øst",
+        "FKO27",
         "FKO"
       ],
       "source_ids": ["dsu_klubmodul", "dsu_calendar"],
@@ -23,6 +27,8 @@
     {
       "name": "Isblomsten",
       "keywords": [
+        "Registration Isblomsten",
+        "Isblomsten 2027",
         "Isblomsten",
         "Isblomst"
       ],
@@ -34,6 +40,7 @@
     {
       "name": "Pingvin Cup",
       "keywords": [
+        "Pingvin Cup 2027",
         "Pingvin Cup",
         "Pingvin",
         "Pingvincup"
@@ -46,6 +53,7 @@
     {
       "name": "Flyver Cup",
       "keywords": [
+        "Flyver Cup 2027",
         "Flyver Cup",
         "Flyver",
         "Flyvercup"

@@ -2,6 +2,7 @@
 
 import json
 import logging
+import re
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
@@ -57,22 +58,45 @@ class CompetitionMonitor:
         Returns (is_matched, rule_dict).
         """
         watched_list = self.watchlist_cfg.get("watched_competitions", [])
-        title_lower = comp.title.lower()
+        title_norm = re.sub(r"\s+", " ", comp.title.strip().lower())
 
         for item in watched_list:
             # Match by event_id if specified
             if "event_id" in item and str(item["event_id"]) == str(comp.event_id):
                 return True, item
 
+            # Robust heuristics for core tracked competitions:
+            item_name = item.get("name", "")
+
+            # 1. Forårskonkurrence Øst
+            if item_name == "Forårskonkurrence Øst":
+                has_fk = "forårskonkurrenc" in title_norm or "foraarskonkurrenc" in title_norm or "fko" in title_norm
+                has_oest = "øst" in title_norm or "oest" in title_norm or "fko" in title_norm
+                is_vest = "vest" in title_norm
+                if has_fk and has_oest and not is_vest:
+                    return True, item
+
+            # 2. Isblomsten
+            if item_name == "Isblomsten" and "isblomst" in title_norm:
+                return True, item
+
+            # 3. Pingvin Cup
+            if item_name == "Pingvin Cup" and "pingvin" in title_norm:
+                return True, item
+
+            # 4. Flyver Cup
+            if item_name == "Flyver Cup" and "flyver" in title_norm:
+                return True, item
+
             # Match by keywords in title
             keywords = item.get("keywords", [])
             for kw in keywords:
-                if kw.lower() in title_lower:
+                kw_norm = re.sub(r"\s+", " ", kw.strip().lower())
+                if kw_norm in title_norm:
                     return True, item
 
             # Match by exact name
-            name = item.get("name", "")
-            if name and name.lower() in title_lower:
+            if item_name and re.sub(r"\s+", " ", item_name.strip().lower()) in title_norm:
                 return True, item
 
         return False, {}
@@ -107,7 +131,7 @@ class CompetitionMonitor:
             # Scenario A: First time this watched competition is observed
             # ------------------------------------------------------------------
             if prev is None:
-                if curr.is_open and curr.spots_available > 0 and alert_on_open:
+                if curr.is_open and (curr.spots_available > 0 or curr.spots_max == 0) and alert_on_open:
                     alerts.append(AlertEvent(
                         alert_type=AlertType.NEW_OPEN,
                         competition=curr,
@@ -130,7 +154,7 @@ class CompetitionMonitor:
             # ------------------------------------------------------------------
 
             # 1. SPOT REOPENED! (Highest priority: was sold out, now has a spot open!)
-            if prev.is_sold_out and not curr.is_sold_out and curr.spots_available > 0 and not curr.is_closed:
+            if prev.is_sold_out and not curr.is_sold_out and (curr.spots_available > 0 or curr.spots_max == 0) and not curr.is_closed:
                 if alert_on_reopened:
                     alerts.append(AlertEvent(
                         alert_type=AlertType.SPOT_REOPENED,
@@ -156,7 +180,7 @@ class CompetitionMonitor:
                     ))
 
             # 3. Registration Opened (status changed from closed/unopened to open)
-            elif not prev.is_open and curr.is_open and curr.spots_available > 0:
+            elif not prev.is_open and curr.is_open and (curr.spots_available > 0 or curr.spots_max == 0):
                 if alert_on_open:
                     alerts.append(AlertEvent(
                         alert_type=AlertType.REGISTRATION_OPENED,

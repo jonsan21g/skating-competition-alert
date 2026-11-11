@@ -39,7 +39,7 @@ class DsuCompetitionScraper:
     def fetch_competitions(self) -> List[Competition]:
         """
         Fetches competitions across monitored sources defined in config/sources.json:
-        1. DSU Klubmodul registration portal (dsu_klubmodul)
+        1. DSU Klubmodul registration portal (dsu_klubmodul) via JSON API & table backup
         2. DSU official calendar / Terminsplan (dsu_calendar)
         3. HIKU Herlev Klubmodul portal for Isblomsten (hiku_klubmodul)
         4. Holdsport Flyver Cup ticket event (holdsport_flyver_cup)
@@ -50,28 +50,12 @@ class DsuCompetitionScraper:
         # 1. DSU Klubmodul Central Registrations
         src_klub = self.get_source("dsu_klubmodul")
         if src_klub:
-            klub_url = src_klub.get("url", "https://dsu.klub-modul.dk/cms/EventOverviewList.aspx")
+            api_url = src_klub.get("api_url", "https://dsu.klub-modul.dk/cms/include/api/json/events.aspx")
+            table_url = src_klub.get("table_url", "https://dsu.klub-modul.dk/cms/EventOverviewListBackup.aspx")
             base_url = src_klub.get("base_url", "https://dsu.klub-modul.dk/cms/")
-            logger.info(f"Fetching active DSU registrations from {klub_url}...")
             try:
-                resp = self.session.get(klub_url, timeout=30)
-                resp.raise_for_status()
-
-                content = resp.content
-                html = ""
-                for encoding in ("utf-8", "utf-8-sig", "iso-8859-1", "windows-1252"):
-                    try:
-                        html = content.decode(encoding)
-                        if "Sjælland" in html or "København" in html or "Åben" in html:
-                            break
-                    except UnicodeDecodeError:
-                        continue
-
-                if not html:
-                    html = resp.text
-
-                competitions.extend(self._parse_klubmodul_html(html, base_url))
-            except requests.RequestException as e:
+                competitions.extend(self._check_dsu_events(api_url, table_url, base_url))
+            except Exception as e:
                 logger.error(f"Failed to fetch DSU registrations from Klubmodul: {e}")
 
         # 2. Upcoming competitions from DSU Official Calendar (Terminsplan)
@@ -89,12 +73,10 @@ class DsuCompetitionScraper:
         if src_hiku:
             try:
                 api_url = src_hiku.get("api_url", "https://hiku.dk/cms/include/api/json/events.aspx")
-                table_url = src_hiku.get("table_url", "https://hiku.dk/cms/EventOverviewList.aspx")
+                table_url = src_hiku.get("table_url", "https://hiku.dk/cms/EventOverviewListBackup.aspx")
                 base_url = src_hiku.get("base_url", "https://hiku.dk/cms/")
                 hiku_comps = self._check_hiku_events(api_url, table_url, base_url)
                 if hiku_comps:
-                    # Prefer live HIKU registration over general calendar placeholder
-                    competitions = [c for c in competitions if not ("isblomst" in c.title.lower() and c.event_id.startswith("dsu_cal_"))]
                     competitions.extend(hiku_comps)
             except Exception as e:
                 logger.warning(f"Failed to check HIKU Klubmodul: {e}")
@@ -121,14 +103,148 @@ class DsuCompetitionScraper:
             except Exception as e:
                 logger.warning(f"Failed to check GSF Pingvin Cup portal: {e}")
 
+        # Deduplicate: Remove calendar stubs if real registrations exist
+        has_real_fko = any(
+            ("forårskonkurrenc" in c.title.lower() or "foraarskonkurrenc" in c.title.lower())
+            and ("øst" in c.title.lower() or "oest" in c.title.lower() or "fko" in c.title.lower())
+            and "vest" not in c.title.lower()
+            and not c.event_id.startswith("dsu_cal_")
+            for c in competitions
+        )
+        if has_real_fko:
+            competitions = [
+                c for c in competitions
+                if not (c.event_id.startswith("dsu_cal_") and ("forårskonkurrenc" in c.title.lower() or "foraarskonkurrenc" in c.title.lower()) and ("øst" in c.title.lower() or "oest" in c.title.lower()))
+            ]
+
+        has_real_isblomst = any(
+            "isblomst" in c.title.lower() and not c.event_id.startswith("dsu_cal_")
+            for c in competitions
+        )
+        if has_real_isblomst:
+            competitions = [
+                c for c in competitions
+                if not (c.event_id.startswith("dsu_cal_") and "isblomst" in c.title.lower())
+            ]
+
         return competitions
+
+    def _parse_klubmodul_json_events(
+        self,
+        events: List[Dict[str, Any]],
+        base_url: str,
+        event_prefix: str = "",
+    ) -> List[Competition]:
+        """Parses structured JSON events returned by Klubmodul /cms/include/api/json/events.aspx."""
+        parsed: List[Competition] = []
+        for ev in events:
+            raw_id = str(ev.get("id", "")).strip()
+            if not raw_id:
+                continue
+            ev_id = f"{event_prefix}{raw_id}" if event_prefix else raw_id
+            name = ev.get("name", "").strip()
+            start_date = ev.get("start_date", "").strip()
+            end_date = ev.get("end_date", "").strip()
+            dates = f"{start_date}-{end_date}" if start_date and end_date else start_date
+            deadline = ev.get("enrollment_end", "").strip() or "Se portal"
+            venue = ev.get("location") or ev.get("address") or ""
+            price = f"{ev.get('price', 'Valg')} kr."
+
+            enrolled = int(ev.get("enrolled") or 0)
+            max_num = int(ev.get("max_number") or 0)
+            sold_out = str(ev.get("sold_out", "false")).lower() == "true"
+            waiting_list = str(ev.get("waiting_list", "false")).lower() == "true"
+            active = str(ev.get("active", "0")) == "1"
+
+            is_sold_out = sold_out or waiting_list or (max_num > 0 and enrolled >= max_num)
+            is_open = active and not is_sold_out
+            is_closed = not active
+
+            spots_taken = enrolled
+            spots_max = max_num
+            if spots_max > 0:
+                spots_available = max(0, spots_max - spots_taken)
+            elif is_open:
+                spots_available = 1
+            else:
+                spots_available = 0
+
+            status = "Udsolgt" if is_sold_out else ("Åben" if is_open else "Lukket")
+
+            categories = []
+            for ep in ev.get("ekstra_prices", []):
+                ep_name = ep.get("ep_name", "").strip()
+                if ep_name:
+                    categories.append(ep_name)
+
+            reg_url = f"{base_url}ProfileEventEnrollment.aspx?EventID={raw_id}"
+            part_url = f"{base_url}EventShowParticipants.aspx?EventID={raw_id}"
+
+            parsed.append(
+                Competition(
+                    event_id=ev_id,
+                    title=name,
+                    dates=dates,
+                    deadline=deadline,
+                    venue=venue,
+                    price=price,
+                    status=status,
+                    spots_taken=spots_taken,
+                    spots_max=spots_max,
+                    spots_available=spots_available,
+                    is_open=is_open,
+                    is_sold_out=is_sold_out,
+                    is_closed=is_closed,
+                    categories=categories,
+                    registration_url=reg_url,
+                    participants_url=part_url,
+                )
+            )
+        return parsed
+
+    def _check_dsu_events(
+        self,
+        api_url: str = "https://dsu.klub-modul.dk/cms/include/api/json/events.aspx",
+        table_url: str = "https://dsu.klub-modul.dk/cms/EventOverviewListBackup.aspx",
+        base_url: str = "https://dsu.klub-modul.dk/cms/",
+    ) -> List[Competition]:
+        """Fetches active DSU registrations via JSON API, falling back to HTML table."""
+        logger.info(f"Checking DSU Klubmodul events from {api_url}...")
+        try:
+            resp = self.session.get(api_url, timeout=20)
+            if resp.status_code == 200:
+                try:
+                    data = resp.json()
+                    events = data.get("Events", [])
+                    if events:
+                        comps = self._parse_klubmodul_json_events(events, base_url, event_prefix="")
+                        logger.info(f"Successfully parsed {len(comps)} events from DSU JSON API.")
+                        return comps
+                except Exception as e:
+                    logger.warning(f"Failed parsing DSU events JSON: {e}")
+        except Exception as e:
+            logger.warning(f"Error fetching DSU events JSON from {api_url}: {e}")
+
+        # Fallback to HTML table view
+        logger.info(f"Falling back to DSU HTML table view at {table_url}...")
+        for url in (table_url, "https://dsu.klub-modul.dk/cms/EventOverviewList.aspx"):
+            try:
+                resp = self.session.get(url, timeout=25)
+                if resp.status_code == 200:
+                    html_comps = self._parse_klubmodul_html(resp.text, base_url)
+                    if html_comps:
+                        return html_comps
+            except Exception as e:
+                logger.error(f"Failed to fetch DSU registrations from {url}: {e}")
+
+        return []
 
     def _parse_html(self, html: str, base_url: str = "https://dsu.klub-modul.dk/cms/") -> List[Competition]:
         """Backwards-compatible wrapper for parsing Klubmodul HTML."""
         return self._parse_klubmodul_html(html, base_url)
 
     def _parse_klubmodul_html(self, html: str, base_url: str) -> List[Competition]:
-        """Parses HTML content from DSU EventOverviewList.aspx."""
+        """Parses HTML content from DSU EventOverviewList.aspx or EventOverviewListBackup.aspx."""
         soup = BeautifulSoup(html, "html.parser")
         table = soup.find("table")
         if not table:
@@ -188,7 +304,7 @@ class DsuCompetitionScraper:
 
             status_lower = status_text.lower()
             is_closed = any(term in status_lower for term in ("lukket", "closed", "slut"))
-            
+
             is_sold_out = False
             if spots_max > 0 and spots_taken >= spots_max:
                 is_sold_out = True
@@ -200,6 +316,9 @@ class DsuCompetitionScraper:
                 and not is_sold_out
                 and not is_closed
             )
+
+            if is_open and spots_max == 0:
+                spots_available = 1
 
             categories = []
             if len(tds) >= 8:
@@ -275,11 +394,25 @@ class DsuCompetitionScraper:
 
             title_clean = re.sub(r"\s+", " ", title).strip()
 
-            # Avoid duplicating competitions already live on Klubmodul
-            title_lower = title_clean.lower()
-            if any(title_lower in c.title.lower() or c.title.lower() in title_lower for c in existing):
+            # Avoid duplicating competitions already live on Klubmodul or HIKU
+            is_dup = False
+            t_norm = re.sub(r"\s+", " ", title_clean.lower())
+            for c in existing:
+                c_title_norm = re.sub(r"\s+", " ", c.title.lower())
+                if t_norm in c_title_norm or c_title_norm in t_norm:
+                    is_dup = True
+                    break
+                if ("forårskonkurrenc" in t_norm and "forårskonkurrenc" in c_title_norm and
+                    "øst" in t_norm and "øst" in c_title_norm and "vest" not in t_norm and "vest" not in c_title_norm):
+                    is_dup = True
+                    break
+                if "isblomst" in t_norm and "isblomst" in c_title_norm:
+                    is_dup = True
+                    break
+
+            if is_dup:
                 continue
-            if any(title_lower == c.title.lower() for c in cal_comps):
+            if any(t_norm == re.sub(r"\s+", " ", c.title.lower()) for c in cal_comps):
                 continue
 
             comp_id = "dsu_cal_" + re.sub(r"[^a-zA-Z0-9]", "_", title_clean.lower()).strip("_")
@@ -308,7 +441,7 @@ class DsuCompetitionScraper:
     def _check_hiku_events(
         self,
         api_url: str = "https://hiku.dk/cms/include/api/json/events.aspx",
-        table_url: str = "https://hiku.dk/cms/EventOverviewList.aspx",
+        table_url: str = "https://hiku.dk/cms/EventOverviewListBackup.aspx",
         base_url: str = "https://hiku.dk/cms/",
     ) -> List[Competition]:
         """
@@ -319,75 +452,43 @@ class DsuCompetitionScraper:
         found_comps: List[Competition] = []
         logger.info(f"Checking HIKU (Herlev) Klubmodul for Isblomsten at {api_url}...")
 
-        # 1. Check JSON API feed
         try:
             resp = self.session.get(api_url, timeout=20)
             if resp.status_code == 200:
                 try:
                     data = resp.json()
+                    isblomst_events = []
                     for ev in data.get("Events", []):
                         name = ev.get("name", "")
                         teaser = ev.get("teaser", "")
                         desc = ev.get("description", "")
-                        combined_text = f"{name} {teaser} {desc}".lower()
+                        combined = f"{name} {teaser} {desc}".lower()
+                        if "isblomst" in combined:
+                            isblomst_events.append(ev)
 
-                        if "isblomst" in combined_text:
-                            ev_id = f"hiku_{ev.get('id', '')}"
-                            start_date = ev.get("start_date", "")
-                            end_date = ev.get("end_date", "")
-                            dates = f"{start_date}-{end_date}" if start_date and end_date else (start_date or "30.01.2027-31.01.2027")
-                            deadline = ev.get("enrollment_end", "") or "Se portal"
-                            venue = ev.get("location") or ev.get("address") or "Herlev Skøjtehal"
-                            price = f"{ev.get('price', 'Valg')} kr."
-
-                            sold_out = str(ev.get("sold_out", "false")).lower() == "true"
-                            waiting_list = str(ev.get("waiting_list", "false")).lower() == "true"
-                            active = str(ev.get("active", "0")) == "1"
-
-                            is_sold_out = sold_out or waiting_list
-                            is_open = active and not is_sold_out
-                            is_closed = not active
-
-                            status = "Udsolgt" if is_sold_out else ("Åben" if is_open else "Lukket")
-
-                            reg_url = f"{base_url}ProfileEventEnrollment.aspx?EventID={ev.get('id')}"
-                            part_url = f"{base_url}EventShowParticipants.aspx?EventID={ev.get('id')}"
-
-                            comp = Competition(
-                                event_id=ev_id,
-                                title=name if "isblomst" in name.lower() else f"Isblomsten 2027 ({name})",
-                                dates=dates,
-                                deadline=deadline,
-                                venue=venue,
-                                price=price,
-                                status=status,
-                                spots_taken=0,
-                                spots_max=0,
-                                spots_available=0,
-                                is_open=is_open,
-                                is_sold_out=is_sold_out,
-                                is_closed=is_closed,
-                                registration_url=reg_url,
-                                participants_url=part_url,
-                            )
-                            found_comps.append(comp)
+                    if isblomst_events:
+                        found_comps = self._parse_klubmodul_json_events(isblomst_events, base_url, event_prefix="hiku_")
+                        return found_comps
                 except Exception as e:
                     logger.debug(f"JSON decode failed for HIKU events API: {e}")
         except Exception as e:
             logger.warning(f"Failed to query HIKU events JSON API: {e}")
 
-        # 2. If not found via JSON API, check HTML table view
+        # Fallback to HTML table view
         if not found_comps:
-            try:
-                resp = self.session.get(table_url, timeout=20)
-                if resp.status_code == 200:
-                    html_comps = self._parse_klubmodul_html(resp.text, base_url)
-                    for c in html_comps:
-                        if "isblomst" in c.title.lower():
-                            c.event_id = f"hiku_{c.event_id}"
-                            found_comps.append(c)
-            except Exception as e:
-                logger.warning(f"Failed to query HIKU HTML table view: {e}")
+            for url in (table_url, "https://hiku.dk/cms/EventOverviewList.aspx"):
+                try:
+                    resp = self.session.get(url, timeout=20)
+                    if resp.status_code == 200:
+                        html_comps = self._parse_klubmodul_html(resp.text, base_url)
+                        for c in html_comps:
+                            if "isblomst" in c.title.lower():
+                                c.event_id = f"hiku_{c.event_id}"
+                                found_comps.append(c)
+                        if found_comps:
+                            break
+                except Exception as e:
+                    logger.warning(f"Failed to query HIKU table view at {url}: {e}")
 
         return found_comps
 
