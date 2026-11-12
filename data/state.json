@@ -7,9 +7,9 @@
     "venue": "Rødovre",
     "price": "1 kr.",
     "status": "Åben",
-    "spots_taken": 21,
+    "spots_taken": 30,
     "spots_max": 500,
-    "spots_available": 479,
+    "spots_available": 470,
     "is_open": true,
     "is_sold_out": false,
     "is_closed": false,
@@ -33,7 +33,7 @@
     ],
     "registration_url": "https://dsu.klub-modul.dk/cms/ProfileEventEnrollment.aspx?EventID=98",
     "participants_url": "https://dsu.klub-modul.dk/cms/EventShowParticipants.aspx?EventID=98",
-    "last_seen": "2026-11-12T13:43:25.786818"
+    "last_seen": "2026-11-12T23:32:13.489674"
   },
   "dsu_cal_flyver_cup": {
     "event_id": "dsu_cal_flyver_cup",
@@ -52,7 +52,7 @@
     "categories": [],
     "registration_url": "https://www.danskate.dk/event/flyver-cup/",
     "participants_url": "",
-    "last_seen": "2026-11-12T13:43:27.517229"
+    "last_seen": "2026-11-12T23:32:15.217651"
   },
   "hiku_811": {
     "event_id": "hiku_811",
@@ -69,16 +69,17 @@
     "is_sold_out": false,
     "is_closed": false,
     "categories": [
-      "Category B2",
-      "Category B1",
       "Category A1",
       "Category A2",
-      "PRACTICE - Friday (Main Rink)",
-      "Pre-order Competition T-shirt"
+      "Category B1",
+      "Category B2",
+      "Competition T-shirt - Pre-order",
+      "Waitinglist",
+      "PRACTICE - Friday (Main Rink)"
     ],
     "registration_url": "https://hiku.dk/cms/ProfileEventEnrollment.aspx?EventID=811",
     "participants_url": "https://hiku.dk/cms/EventShowParticipants.aspx?EventID=811",
-    "last_seen": "2026-11-12T13:43:28.473087"
+    "last_seen": "2026-11-12T23:32:15.903270"
   },
   "gsf_pingvin_cup_2027": {
     "event_id": "gsf_pingvin_cup_2027",
@@ -101,6 +102,6 @@
     ],
     "registration_url": "https://gsf-kunst.dk/klub/gladsaxe-skojtelober-forening/sider/pingvin-cup-2027",
     "participants_url": "",
-    "last_seen": "2026-11-12T13:43:43.955809"
+    "last_seen": "2026-11-12T23:32:24.332765"
   }
 }
