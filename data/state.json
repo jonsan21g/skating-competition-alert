@@ -7,9 +7,9 @@
     "venue": "Rødovre",
     "price": "1 kr.",
     "status": "Åben",
-    "spots_taken": 55,
+    "spots_taken": 56,
     "spots_max": 500,
-    "spots_available": 445,
+    "spots_available": 444,
     "is_open": true,
     "is_sold_out": false,
     "is_closed": false,
@@ -33,7 +33,7 @@
     ],
     "registration_url": "https://dsu.klub-modul.dk/cms/ProfileEventEnrollment.aspx?EventID=98",
     "participants_url": "https://dsu.klub-modul.dk/cms/EventShowParticipants.aspx?EventID=98",
-    "last_seen": "2026-11-14T22:18:08.703716"
+    "last_seen": "2026-11-15T12:41:51.807673"
   },
   "dsu_cal_flyver_cup": {
     "event_id": "dsu_cal_flyver_cup",
@@ -52,7 +52,7 @@
     "categories": [],
     "registration_url": "https://www.danskate.dk/event/flyver-cup/",
     "participants_url": "",
-    "last_seen": "2026-11-14T22:18:10.397527"
+    "last_seen": "2026-11-15T12:41:53.071679"
   },
   "hiku_811": {
     "event_id": "hiku_811",
@@ -79,7 +79,7 @@
     ],
     "registration_url": "https://hiku.dk/cms/ProfileEventEnrollment.aspx?EventID=811",
     "participants_url": "https://hiku.dk/cms/EventShowParticipants.aspx?EventID=811",
-    "last_seen": "2026-11-14T22:18:11.142005"
+    "last_seen": "2026-11-15T12:41:53.751055"
   },
   "gsf_pingvin_cup_2027": {
     "event_id": "gsf_pingvin_cup_2027",
@@ -102,6 +102,6 @@
     ],
     "registration_url": "https://gsf-kunst.dk/klub/gladsaxe-skojtelober-forening/sider/pingvin-cup-2027",
     "participants_url": "",
-    "last_seen": "2026-11-14T22:18:17.886907"
+    "last_seen": "2026-11-15T12:42:04.168368"
   }
 }
