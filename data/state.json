@@ -33,7 +33,7 @@
     ],
     "registration_url": "https://dsu.klub-modul.dk/cms/ProfileEventEnrollment.aspx?EventID=98",
     "participants_url": "https://dsu.klub-modul.dk/cms/EventShowParticipants.aspx?EventID=98",
-    "last_seen": "2026-11-18T00:54:55.356354"
+    "last_seen": "2026-11-18T13:53:58.343142"
   },
   "dsu_cal_flyver_cup": {
     "event_id": "dsu_cal_flyver_cup",
@@ -52,7 +52,28 @@
     "categories": [],
     "registration_url": "https://www.danskate.dk/event/flyver-cup/",
     "participants_url": "",
-    "last_seen": "2026-11-18T00:54:57.006687"
+    "last_seen": "2026-11-18T13:54:00.194068"
+  },
+  "hiku_814": {
+    "event_id": "hiku_814",
+    "title": "Hjælp til Isblomsten 2027",
+    "dates": "29.01.2027-31.01.2027",
+    "deadline": "29.01.2027",
+    "venue": "Skøjtehallen",
+    "price": "0 kr.",
+    "status": "Åben",
+    "spots_taken": 0,
+    "spots_max": 0,
+    "spots_available": 1,
+    "is_open": true,
+    "is_sold_out": false,
+    "is_closed": false,
+    "categories": [
+      "Vælg i menuen til højre - TAK FOR AT HJÆLPE!"
+    ],
+    "registration_url": "https://hiku.dk/cms/ProfileEventEnrollment.aspx?EventID=814",
+    "participants_url": "https://hiku.dk/cms/EventShowParticipants.aspx?EventID=814",
+    "last_seen": "2026-11-18T13:54:01.237842"
   },
   "hiku_811": {
     "event_id": "hiku_811",
@@ -80,7 +101,7 @@
     ],
     "registration_url": "https://hiku.dk/cms/ProfileEventEnrollment.aspx?EventID=811",
     "participants_url": "https://hiku.dk/cms/EventShowParticipants.aspx?EventID=811",
-    "last_seen": "2026-11-18T00:54:57.735676"
+    "last_seen": "2026-11-18T13:54:01.237856"
   },
   "gsf_pingvin_cup_2027": {
     "event_id": "gsf_pingvin_cup_2027",
@@ -103,6 +124,6 @@
     ],
     "registration_url": "https://gsf-kunst.dk/klub/gladsaxe-skojtelober-forening/sider/pingvin-cup-2027",
     "participants_url": "",
-    "last_seen": "2026-11-18T00:55:03.729154"
+    "last_seen": "2026-11-18T13:54:18.010719"
   }
 }
