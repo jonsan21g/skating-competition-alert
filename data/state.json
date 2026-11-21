@@ -7,9 +7,9 @@
     "venue": "Rødovre",
     "price": "1 kr.",
     "status": "Åben",
-    "spots_taken": 80,
+    "spots_taken": 82,
     "spots_max": 500,
-    "spots_available": 420,
+    "spots_available": 418,
     "is_open": true,
     "is_sold_out": false,
     "is_closed": false,
@@ -33,7 +33,7 @@
     ],
     "registration_url": "https://dsu.klub-modul.dk/cms/ProfileEventEnrollment.aspx?EventID=98",
     "participants_url": "https://dsu.klub-modul.dk/cms/EventShowParticipants.aspx?EventID=98",
-    "last_seen": "2026-11-21T13:25:31.759120"
+    "last_seen": "2026-11-21T23:08:02.524558"
   },
   "dsu_cal_flyver_cup": {
     "event_id": "dsu_cal_flyver_cup",
@@ -52,7 +52,7 @@
     "categories": [],
     "registration_url": "https://www.danskate.dk/event/flyver-cup/",
     "participants_url": "",
-    "last_seen": "2026-11-21T13:25:33.113638"
+    "last_seen": "2026-11-21T23:08:04.047809"
   },
   "hiku_814": {
     "event_id": "hiku_814",
@@ -73,7 +73,7 @@
     ],
     "registration_url": "https://hiku.dk/cms/ProfileEventEnrollment.aspx?EventID=814",
     "participants_url": "https://hiku.dk/cms/EventShowParticipants.aspx?EventID=814",
-    "last_seen": "2026-11-21T13:25:33.800327"
+    "last_seen": "2026-11-21T23:08:04.867429"
   },
   "hiku_811": {
     "event_id": "hiku_811",
@@ -95,14 +95,14 @@
       "Category B1",
       "Category B2",
       "Competition T-shirt - Pre-order",
-      "PRACTICE - ISU / A1 (Sat. Main - Sun. Practice)",
-      "PRACTICE A2 - Friday (Main Rink)",
-      "OPEN PRACTICE - Friday",
+      "PRACTICE - ISU / A1 (Fri. Main - Sun. Rink 2, TBA)",
+      "PRACTICE A2 - Friday (Main or Rink 2, TBA)",
+      "OPEN PRACTICE - Friday (Main + Rink 2)",
       "Waitinglist"
     ],
     "registration_url": "https://hiku.dk/cms/ProfileEventEnrollment.aspx?EventID=811",
     "participants_url": "https://hiku.dk/cms/EventShowParticipants.aspx?EventID=811",
-    "last_seen": "2026-11-21T13:25:33.800343"
+    "last_seen": "2026-11-21T23:08:04.867443"
   },
   "gsf_pingvin_cup_2027": {
     "event_id": "gsf_pingvin_cup_2027",
@@ -125,6 +125,6 @@
     ],
     "registration_url": "https://gsf-kunst.dk/klub/gladsaxe-skojtelober-forening/sider/pingvin-cup-2027",
     "participants_url": "",
-    "last_seen": "2026-11-21T13:25:48.840397"
+    "last_seen": "2026-11-21T23:08:19.199410"
   }
 }
