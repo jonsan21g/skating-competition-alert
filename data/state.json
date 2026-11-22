@@ -7,9 +7,9 @@
     "venue": "Rødovre",
     "price": "1 kr.",
     "status": "Åben",
-    "spots_taken": 82,
+    "spots_taken": 86,
     "spots_max": 500,
-    "spots_available": 418,
+    "spots_available": 414,
     "is_open": true,
     "is_sold_out": false,
     "is_closed": false,
@@ -33,7 +33,7 @@
     ],
     "registration_url": "https://dsu.klub-modul.dk/cms/ProfileEventEnrollment.aspx?EventID=98",
     "participants_url": "https://dsu.klub-modul.dk/cms/EventShowParticipants.aspx?EventID=98",
-    "last_seen": "2026-11-22T13:16:38.574769"
+    "last_seen": "2026-11-22T23:33:53.431150"
   },
   "dsu_cal_flyver_cup": {
     "event_id": "dsu_cal_flyver_cup",
@@ -52,7 +52,7 @@
     "categories": [],
     "registration_url": "https://www.danskate.dk/event/flyver-cup/",
     "participants_url": "",
-    "last_seen": "2026-11-22T13:16:39.912839"
+    "last_seen": "2026-11-22T23:33:55.051670"
   },
   "hiku_814": {
     "event_id": "hiku_814",
@@ -73,7 +73,7 @@
     ],
     "registration_url": "https://hiku.dk/cms/ProfileEventEnrollment.aspx?EventID=814",
     "participants_url": "https://hiku.dk/cms/EventShowParticipants.aspx?EventID=814",
-    "last_seen": "2026-11-22T13:16:40.406421"
+    "last_seen": "2026-11-22T23:33:55.734280"
   },
   "hiku_811": {
     "event_id": "hiku_811",
@@ -102,7 +102,7 @@
     ],
     "registration_url": "https://hiku.dk/cms/ProfileEventEnrollment.aspx?EventID=811",
     "participants_url": "https://hiku.dk/cms/EventShowParticipants.aspx?EventID=811",
-    "last_seen": "2026-11-22T13:16:40.406432"
+    "last_seen": "2026-11-22T23:33:55.734294"
   },
   "gsf_pingvin_cup_2027": {
     "event_id": "gsf_pingvin_cup_2027",
@@ -125,6 +125,6 @@
     ],
     "registration_url": "https://gsf-kunst.dk/klub/gladsaxe-skojtelober-forening/sider/pingvin-cup-2027",
     "participants_url": "",
-    "last_seen": "2026-11-22T13:16:52.906714"
+    "last_seen": "2026-11-22T23:34:02.772314"
   }
 }
