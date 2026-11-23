@@ -7,9 +7,9 @@
     "venue": "Rødovre",
     "price": "1 kr.",
     "status": "Åben",
-    "spots_taken": 86,
+    "spots_taken": 88,
     "spots_max": 500,
-    "spots_available": 414,
+    "spots_available": 412,
     "is_open": true,
     "is_sold_out": false,
     "is_closed": false,
@@ -33,7 +33,7 @@
     ],
     "registration_url": "https://dsu.klub-modul.dk/cms/ProfileEventEnrollment.aspx?EventID=98",
     "participants_url": "https://dsu.klub-modul.dk/cms/EventShowParticipants.aspx?EventID=98",
-    "last_seen": "2026-11-22T23:33:53.431150"
+    "last_seen": "2026-11-23T15:54:17.240571"
   },
   "dsu_cal_flyver_cup": {
     "event_id": "dsu_cal_flyver_cup",
@@ -52,7 +52,26 @@
     "categories": [],
     "registration_url": "https://www.danskate.dk/event/flyver-cup/",
     "participants_url": "",
-    "last_seen": "2026-11-22T23:33:55.051670"
+    "last_seen": "2026-11-23T15:54:18.815025"
+  },
+  "dsu_cal_pingvin_cup": {
+    "event_id": "dsu_cal_pingvin_cup",
+    "title": "Pingvin Cup (Terminsplan)",
+    "dates": "02 apr fredag",
+    "deadline": "Ikke åbnet endnu",
+    "venue": "Gladsaxe Skøjtehal",
+    "price": "-",
+    "status": "Kommende",
+    "spots_taken": 0,
+    "spots_max": 0,
+    "spots_available": 0,
+    "is_open": false,
+    "is_sold_out": false,
+    "is_closed": false,
+    "categories": [],
+    "registration_url": "https://www.danskate.dk/event/pingvin-cup-2/",
+    "participants_url": "",
+    "last_seen": "2026-11-23T15:54:18.815293"
   },
   "hiku_814": {
     "event_id": "hiku_814",
@@ -73,13 +92,13 @@
     ],
     "registration_url": "https://hiku.dk/cms/ProfileEventEnrollment.aspx?EventID=814",
     "participants_url": "https://hiku.dk/cms/EventShowParticipants.aspx?EventID=814",
-    "last_seen": "2026-11-22T23:33:55.734280"
+    "last_seen": "2026-11-23T15:54:19.424357"
   },
   "hiku_811": {
     "event_id": "hiku_811",
     "title": "Registration Isblomsten 2027",
     "dates": "30.01.2027-31.01.2027",
-    "deadline": "13.12.2026",
+    "deadline": "22.11.2026",
     "venue": "Herlev Skating Arena",
     "price": "0 kr.",
     "status": "Åben",
@@ -102,29 +121,6 @@
     ],
     "registration_url": "https://hiku.dk/cms/ProfileEventEnrollment.aspx?EventID=811",
     "participants_url": "https://hiku.dk/cms/EventShowParticipants.aspx?EventID=811",
-    "last_seen": "2026-11-22T23:33:55.734294"
-  },
-  "gsf_pingvin_cup_2027": {
-    "event_id": "gsf_pingvin_cup_2027",
-    "title": "Pingvin Cup 2027 (Gladsaxe Skøjteløber-Forening)",
-    "dates": "03.04.2027-04.04.2027",
-    "deadline": "Ikke åbnet endnu",
-    "venue": "Gladsaxe Skøjtehal",
-    "price": "Valg",
-    "status": "Kommende",
-    "spots_taken": 0,
-    "spots_max": 0,
-    "spots_available": 0,
-    "is_open": false,
-    "is_sold_out": false,
-    "is_closed": false,
-    "categories": [
-      "Novice B1",
-      "Springs B2",
-      "FunSkate Free"
-    ],
-    "registration_url": "https://gsf-kunst.dk/klub/gladsaxe-skojtelober-forening/sider/pingvin-cup-2027",
-    "participants_url": "",
-    "last_seen": "2026-11-22T23:34:02.772314"
+    "last_seen": "2026-11-23T15:54:19.424372"
   }
 }
