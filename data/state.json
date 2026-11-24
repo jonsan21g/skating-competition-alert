@@ -7,9 +7,9 @@
     "venue": "Rødovre",
     "price": "1 kr.",
     "status": "Åben",
-    "spots_taken": 88,
+    "spots_taken": 90,
     "spots_max": 500,
-    "spots_available": 412,
+    "spots_available": 410,
     "is_open": true,
     "is_sold_out": false,
     "is_closed": false,
@@ -33,7 +33,7 @@
     ],
     "registration_url": "https://dsu.klub-modul.dk/cms/ProfileEventEnrollment.aspx?EventID=98",
     "participants_url": "https://dsu.klub-modul.dk/cms/EventShowParticipants.aspx?EventID=98",
-    "last_seen": "2026-11-23T15:54:17.240571"
+    "last_seen": "2026-11-24T03:56:21.366773"
   },
   "dsu_cal_flyver_cup": {
     "event_id": "dsu_cal_flyver_cup",
@@ -52,7 +52,7 @@
     "categories": [],
     "registration_url": "https://www.danskate.dk/event/flyver-cup/",
     "participants_url": "",
-    "last_seen": "2026-11-23T15:54:18.815025"
+    "last_seen": "2026-11-24T03:56:22.861924"
   },
   "dsu_cal_pingvin_cup": {
     "event_id": "dsu_cal_pingvin_cup",
@@ -71,7 +71,7 @@
     "categories": [],
     "registration_url": "https://www.danskate.dk/event/pingvin-cup-2/",
     "participants_url": "",
-    "last_seen": "2026-11-23T15:54:18.815293"
+    "last_seen": "2026-11-24T03:56:22.862407"
   },
   "hiku_814": {
     "event_id": "hiku_814",
@@ -92,7 +92,7 @@
     ],
     "registration_url": "https://hiku.dk/cms/ProfileEventEnrollment.aspx?EventID=814",
     "participants_url": "https://hiku.dk/cms/EventShowParticipants.aspx?EventID=814",
-    "last_seen": "2026-11-23T15:54:19.424357"
+    "last_seen": "2026-11-24T03:56:23.504897"
   },
   "hiku_811": {
     "event_id": "hiku_811",
@@ -121,6 +121,6 @@
     ],
     "registration_url": "https://hiku.dk/cms/ProfileEventEnrollment.aspx?EventID=811",
     "participants_url": "https://hiku.dk/cms/EventShowParticipants.aspx?EventID=811",
-    "last_seen": "2026-11-23T15:54:19.424372"
+    "last_seen": "2026-11-24T03:56:23.504911"
   }
 }
