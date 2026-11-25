@@ -33,7 +33,7 @@
     ],
     "registration_url": "https://dsu.klub-modul.dk/cms/ProfileEventEnrollment.aspx?EventID=98",
     "participants_url": "https://dsu.klub-modul.dk/cms/EventShowParticipants.aspx?EventID=98",
-    "last_seen": "2026-11-25T02:20:49.946508"
+    "last_seen": "2026-11-25T15:31:05.581840"
   },
   "dsu_cal_flyver_cup": {
     "event_id": "dsu_cal_flyver_cup",
@@ -52,7 +52,7 @@
     "categories": [],
     "registration_url": "https://www.danskate.dk/event/flyver-cup/",
     "participants_url": "",
-    "last_seen": "2026-11-25T02:20:51.435021"
+    "last_seen": "2026-11-25T15:31:07.285136"
   },
   "dsu_cal_pingvin_cup": {
     "event_id": "dsu_cal_pingvin_cup",
@@ -71,7 +71,7 @@
     "categories": [],
     "registration_url": "https://www.danskate.dk/event/pingvin-cup-2/",
     "participants_url": "",
-    "last_seen": "2026-11-25T02:20:51.435530"
+    "last_seen": "2026-11-25T15:31:07.285640"
   },
   "hiku_814": {
     "event_id": "hiku_814",
@@ -92,7 +92,7 @@
     ],
     "registration_url": "https://hiku.dk/cms/ProfileEventEnrollment.aspx?EventID=814",
     "participants_url": "https://hiku.dk/cms/EventShowParticipants.aspx?EventID=814",
-    "last_seen": "2026-11-25T02:20:52.318491"
+    "last_seen": "2026-11-25T15:31:07.937048"
   },
   "hiku_817": {
     "event_id": "hiku_817",
@@ -123,7 +123,7 @@
     ],
     "registration_url": "https://hiku.dk/cms/ProfileEventEnrollment.aspx?EventID=817",
     "participants_url": "https://hiku.dk/cms/EventShowParticipants.aspx?EventID=817",
-    "last_seen": "2026-11-25T02:20:52.318509"
+    "last_seen": "2026-11-25T15:31:07.937063"
   },
   "hiku_811": {
     "event_id": "hiku_811",
@@ -152,6 +152,6 @@
     ],
     "registration_url": "https://hiku.dk/cms/ProfileEventEnrollment.aspx?EventID=811",
     "participants_url": "https://hiku.dk/cms/EventShowParticipants.aspx?EventID=811",
-    "last_seen": "2026-11-25T02:20:52.318518"
+    "last_seen": "2026-11-25T15:31:07.937072"
   }
 }
