@@ -33,7 +33,7 @@
     ],
     "registration_url": "https://dsu.klub-modul.dk/cms/ProfileEventEnrollment.aspx?EventID=98",
     "participants_url": "https://dsu.klub-modul.dk/cms/EventShowParticipants.aspx?EventID=98",
-    "last_seen": "2026-11-24T15:47:17.142452"
+    "last_seen": "2026-11-25T02:20:49.946508"
   },
   "dsu_cal_flyver_cup": {
     "event_id": "dsu_cal_flyver_cup",
@@ -52,7 +52,7 @@
     "categories": [],
     "registration_url": "https://www.danskate.dk/event/flyver-cup/",
     "participants_url": "",
-    "last_seen": "2026-11-24T15:47:18.675760"
+    "last_seen": "2026-11-25T02:20:51.435021"
   },
   "dsu_cal_pingvin_cup": {
     "event_id": "dsu_cal_pingvin_cup",
@@ -71,7 +71,7 @@
     "categories": [],
     "registration_url": "https://www.danskate.dk/event/pingvin-cup-2/",
     "participants_url": "",
-    "last_seen": "2026-11-24T15:47:18.676240"
+    "last_seen": "2026-11-25T02:20:51.435530"
   },
   "hiku_814": {
     "event_id": "hiku_814",
@@ -92,7 +92,38 @@
     ],
     "registration_url": "https://hiku.dk/cms/ProfileEventEnrollment.aspx?EventID=814",
     "participants_url": "https://hiku.dk/cms/EventShowParticipants.aspx?EventID=814",
-    "last_seen": "2026-11-24T15:47:19.312753"
+    "last_seen": "2026-11-25T02:20:52.318491"
+  },
+  "hiku_817": {
+    "event_id": "hiku_817",
+    "title": "Waiting List Entry Registration – Isblomsten 2027",
+    "dates": "29.01.2027-31.01.2027",
+    "deadline": "26.11.2026",
+    "venue": "Herlev Skating Arena",
+    "price": "0 kr.",
+    "status": "Åben",
+    "spots_taken": 0,
+    "spots_max": 0,
+    "spots_available": 1,
+    "is_open": true,
+    "is_sold_out": false,
+    "is_closed": false,
+    "categories": [
+      "Novice A1",
+      "Junior A2",
+      "Junior B1",
+      "Novice B1",
+      "Novice B2",
+      "Springs B1",
+      "Competition T-shirt - Pre-order",
+      "PRACTICE - ISU / A1 (Fri. Main - Sun. Rink 2, TBA)",
+      "PRACTICE A2 - Friday (Main or Rink 2, TBA)",
+      "OPEN PRACTICE - Friday (Main + Rink 2)",
+      "Waitinglist"
+    ],
+    "registration_url": "https://hiku.dk/cms/ProfileEventEnrollment.aspx?EventID=817",
+    "participants_url": "https://hiku.dk/cms/EventShowParticipants.aspx?EventID=817",
+    "last_seen": "2026-11-25T02:20:52.318509"
   },
   "hiku_811": {
     "event_id": "hiku_811",
@@ -121,6 +152,6 @@
     ],
     "registration_url": "https://hiku.dk/cms/ProfileEventEnrollment.aspx?EventID=811",
     "participants_url": "https://hiku.dk/cms/EventShowParticipants.aspx?EventID=811",
-    "last_seen": "2026-11-24T15:47:19.312766"
+    "last_seen": "2026-11-25T02:20:52.318518"
   }
 }
