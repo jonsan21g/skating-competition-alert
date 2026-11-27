@@ -7,9 +7,9 @@
     "venue": "Rødovre",
     "price": "1 kr.",
     "status": "Åben",
-    "spots_taken": 95,
+    "spots_taken": 98,
     "spots_max": 500,
-    "spots_available": 405,
+    "spots_available": 402,
     "is_open": true,
     "is_sold_out": false,
     "is_closed": false,
@@ -33,7 +33,7 @@
     ],
     "registration_url": "https://dsu.klub-modul.dk/cms/ProfileEventEnrollment.aspx?EventID=98",
     "participants_url": "https://dsu.klub-modul.dk/cms/EventShowParticipants.aspx?EventID=98",
-    "last_seen": "2026-11-27T01:41:35.123039"
+    "last_seen": "2026-11-27T14:58:01.591468"
   },
   "dsu_cal_flyver_cup": {
     "event_id": "dsu_cal_flyver_cup",
@@ -52,7 +52,7 @@
     "categories": [],
     "registration_url": "https://www.danskate.dk/event/flyver-cup/",
     "participants_url": "",
-    "last_seen": "2026-11-27T01:41:36.734699"
+    "last_seen": "2026-11-27T14:58:03.555596"
   },
   "dsu_cal_pingvin_cup": {
     "event_id": "dsu_cal_pingvin_cup",
@@ -71,7 +71,7 @@
     "categories": [],
     "registration_url": "https://www.danskate.dk/event/pingvin-cup-2/",
     "participants_url": "",
-    "last_seen": "2026-11-27T01:41:36.734963"
+    "last_seen": "2026-11-27T14:58:03.556071"
   },
   "hiku_814": {
     "event_id": "hiku_814",
@@ -92,13 +92,13 @@
     ],
     "registration_url": "https://hiku.dk/cms/ProfileEventEnrollment.aspx?EventID=814",
     "participants_url": "https://hiku.dk/cms/EventShowParticipants.aspx?EventID=814",
-    "last_seen": "2026-11-27T01:41:37.389788"
+    "last_seen": "2026-11-27T14:58:04.068877"
   },
   "hiku_817": {
     "event_id": "hiku_817",
     "title": "Waiting List Entry Registration – Isblomsten 2027",
     "dates": "29.01.2027-31.01.2027",
-    "deadline": "26.11.2026",
+    "deadline": "29.11.2026",
     "venue": "Herlev Skating Arena",
     "price": "0 kr.",
     "status": "Åben",
@@ -109,21 +109,23 @@
     "is_sold_out": false,
     "is_closed": false,
     "categories": [
-      "Novice A1",
+      "ISU Novice A1",
       "Junior A2",
       "Junior B1",
       "Novice B1",
-      "Novice B2",
       "Springs B1",
-      "Competition T-shirt - Pre-order",
-      "PRACTICE - ISU / A1 (Fri. Main - Sun. Rink 2, TBA)",
-      "PRACTICE A2 - Friday (Main or Rink 2, TBA)",
-      "OPEN PRACTICE - Friday (Main + Rink 2)",
-      "Waitinglist"
+      "Novice B2",
+      "PRACTICE A1 (Fri. Main SP+ Sun. Rink 2 FP)",
+      "PRACTICE A1 - (Sunday only single booking FP)",
+      "PRACTICE for A2 - Friday (Main or Rink 2, TBA)",
+      "OPEN PRACTICE - Friday RINK 2",
+      "OPEN PRACTICE - Friday RINK 1",
+      "OPEN PRACTICE (LATE) - Friday RINK TBA",
+      "Competition T-shirt - Pre-order"
     ],
     "registration_url": "https://hiku.dk/cms/ProfileEventEnrollment.aspx?EventID=817",
     "participants_url": "https://hiku.dk/cms/EventShowParticipants.aspx?EventID=817",
-    "last_seen": "2026-11-27T01:41:37.389802"
+    "last_seen": "2026-11-27T14:58:04.068894"
   },
   "hiku_811": {
     "event_id": "hiku_811",
@@ -152,6 +154,6 @@
     ],
     "registration_url": "https://hiku.dk/cms/ProfileEventEnrollment.aspx?EventID=811",
     "participants_url": "https://hiku.dk/cms/EventShowParticipants.aspx?EventID=811",
-    "last_seen": "2026-11-27T01:41:37.389805"
+    "last_seen": "2026-11-27T14:58:04.068900"
   }
 }
