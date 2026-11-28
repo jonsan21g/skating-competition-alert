@@ -7,9 +7,9 @@
     "venue": "Rødovre",
     "price": "1 kr.",
     "status": "Åben",
-    "spots_taken": 100,
+    "spots_taken": 99,
     "spots_max": 500,
-    "spots_available": 400,
+    "spots_available": 401,
     "is_open": true,
     "is_sold_out": false,
     "is_closed": false,
@@ -33,7 +33,7 @@
     ],
     "registration_url": "https://dsu.klub-modul.dk/cms/ProfileEventEnrollment.aspx?EventID=98",
     "participants_url": "https://dsu.klub-modul.dk/cms/EventShowParticipants.aspx?EventID=98",
-    "last_seen": "2026-11-28T01:25:34.259740"
+    "last_seen": "2026-11-28T14:07:27.965844"
   },
   "dsu_cal_flyver_cup": {
     "event_id": "dsu_cal_flyver_cup",
@@ -52,7 +52,7 @@
     "categories": [],
     "registration_url": "https://www.danskate.dk/event/flyver-cup/",
     "participants_url": "",
-    "last_seen": "2026-11-28T01:25:36.115719"
+    "last_seen": "2026-11-28T14:07:29.204644"
   },
   "dsu_cal_pingvin_cup": {
     "event_id": "dsu_cal_pingvin_cup",
@@ -71,7 +71,7 @@
     "categories": [],
     "registration_url": "https://www.danskate.dk/event/pingvin-cup-2/",
     "participants_url": "",
-    "last_seen": "2026-11-28T01:25:36.116197"
+    "last_seen": "2026-11-28T14:07:29.205001"
   },
   "hiku_814": {
     "event_id": "hiku_814",
@@ -92,7 +92,7 @@
     ],
     "registration_url": "https://hiku.dk/cms/ProfileEventEnrollment.aspx?EventID=814",
     "participants_url": "https://hiku.dk/cms/EventShowParticipants.aspx?EventID=814",
-    "last_seen": "2026-11-28T01:25:36.832489"
+    "last_seen": "2026-11-28T14:07:30.031065"
   },
   "hiku_817": {
     "event_id": "hiku_817",
@@ -125,7 +125,7 @@
     ],
     "registration_url": "https://hiku.dk/cms/ProfileEventEnrollment.aspx?EventID=817",
     "participants_url": "https://hiku.dk/cms/EventShowParticipants.aspx?EventID=817",
-    "last_seen": "2026-11-28T01:25:36.832505"
+    "last_seen": "2026-11-28T14:07:30.031079"
   },
   "hiku_811": {
     "event_id": "hiku_811",
@@ -154,6 +154,6 @@
     ],
     "registration_url": "https://hiku.dk/cms/ProfileEventEnrollment.aspx?EventID=811",
     "participants_url": "https://hiku.dk/cms/EventShowParticipants.aspx?EventID=811",
-    "last_seen": "2026-11-28T01:25:36.832511"
+    "last_seen": "2026-11-28T14:07:30.031083"
   }
 }
